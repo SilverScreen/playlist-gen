@@ -17,3 +17,6 @@ nb-configuration.xml
 # Maven
 log/
 target/
+
+# Test
+test.db
