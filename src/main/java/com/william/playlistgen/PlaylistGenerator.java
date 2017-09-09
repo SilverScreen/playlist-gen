@@ -47,10 +47,17 @@ public class PlaylistGenerator {
         generatePlaylistFile(songsFromDatabase, playlistFileName);
     }
 
-    public void generateLovedTracksPlaylist() {
+    public void generateMyLovedTracksPlaylist() {
         final List<Song> lastFmLovedTracks = lastFmPlaylistGen.getLovedTracks(LAST_FM_USERNAME);
         final List<Song> songsFromDatabase = getSongsFromDatabase(lastFmLovedTracks);
         final String playlistFileName = "lastfmloved" + PLAYLIST_FILE_EXT;
+        generatePlaylistFile(songsFromDatabase, playlistFileName);
+    }
+
+    public void generateFriendsLovedTracksPlaylist() {
+        final List<Song> friendsLovedTracks = lastFmPlaylistGen.getFriendsLastLovedTracks(LAST_FM_USERNAME);
+        final List<Song> songsFromDatabase = getSongsFromDatabase(friendsLovedTracks);
+        final String playlistFileName = "friendslastfmloved" + PLAYLIST_FILE_EXT;
         generatePlaylistFile(songsFromDatabase, playlistFileName);
     }
 

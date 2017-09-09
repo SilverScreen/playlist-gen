@@ -59,16 +59,30 @@ public class PlaylistGeneratorTest {
     }
 
     @Test
-    public void generateLovedTracksPlaylist_successfullyGeneratesFile() {
+    public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
         assertTrue(objUnderTest.loadLibrary(MUSIC_DIRECTORY));
-        objUnderTest.generateLovedTracksPlaylist();
+        objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileCreated("lastfmloved.m3u");
     }
 
     @Test
-    public void generateLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
+    public void generateMyLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
         assertTrue(objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY));
-        objUnderTest.generateLovedTracksPlaylist();
+        objUnderTest.generateMyLovedTracksPlaylist();
+        assertPlaylistFileNotCreated();
+    }
+
+    @Test
+    public void generateFriendsLovedTracksPlaylist_successfullyGeneratesFile() {
+        assertTrue(objUnderTest.loadLibrary(MUSIC_DIRECTORY));
+        objUnderTest.generateFriendsLovedTracksPlaylist();
+        assertPlaylistFileCreated("friendslastfmloved.m3u");
+    }
+
+    @Test
+    public void generateFriendsLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
+        assertTrue(objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY));
+        objUnderTest.generateFriendsLovedTracksPlaylist();
         assertPlaylistFileNotCreated();
     }
 

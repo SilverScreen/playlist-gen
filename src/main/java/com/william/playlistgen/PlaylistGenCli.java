@@ -52,6 +52,7 @@ public class PlaylistGenCli {
         System.out.println("1 - Load local library");
         System.out.println("2 - Generate Last.fm top tracks playlist");
         System.out.println("3 - Generate Last.fm loved tracks playlist");
+        System.out.println("4 - Generate Last.fm friends loved tracks playlist");
         System.out.println("0 - Exit");
         System.out.println();
         System.out.println("===================================");
@@ -75,7 +76,10 @@ public class PlaylistGenCli {
                 playlistGenerator.generateTopTracksPlaylist();
                 break;
             case 3:
-                playlistGenerator.generateLovedTracksPlaylist();
+                playlistGenerator.generateMyLovedTracksPlaylist();
+                break;
+            case 4:
+                playlistGenerator.generateFriendsLovedTracksPlaylist();
                 break;
             case 0:
                 break;
