@@ -3,14 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.william.play;
-
-import com.william.dev.common.utils.Song;
+package com.william.playlistgen;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -19,9 +16,7 @@ import java.util.Scanner;
  */
 public class PlaylistGenCli {
 
-    private final static String PLAYLIST_FILE_EXT = ".m3u";
     private final String musicLibrary;
-    private final String playlistDirectory;
     private final PlaylistGenerator playlistGenerator;
     private final Scanner userInput;
 
@@ -35,8 +30,8 @@ public class PlaylistGenCli {
             e.printStackTrace();
         }
         musicLibrary = properties.getProperty("musicLibrary");
-        playlistDirectory = properties.getProperty("playlistDirectory");
-        playlistGenerator = new PlaylistGenerator();
+        final String playlistDirectory = properties.getProperty("playlistDirectory");
+        playlistGenerator = new PlaylistGenerator(playlistDirectory);
         userInput = new Scanner(System.in);
     }
 
@@ -77,10 +72,10 @@ public class PlaylistGenCli {
                 loadLocalLibrary();
                 break;
             case 2:
-                generateLastFmTopTracksPlaylist();
+                playlistGenerator.generateTopTracksPlaylist();
                 break;
             case 3:
-                generateLastFmLovedPlaylist();
+                playlistGenerator.generateLovedTracksPlaylist();
                 break;
             case 0:
                 break;
@@ -103,24 +98,5 @@ public class PlaylistGenCli {
 
     private boolean userChoiceIsYes(final String userChoice) {
         return (userChoice.toLowerCase().equals("y")) || userChoice.toLowerCase().equals("yes");
-    }
-
-    private void generateLastFmTopTracksPlaylist() {
-        final String playlistFileName = "lastfmtoptracks" + PLAYLIST_FILE_EXT;
-        final List<Song> songList = playlistGenerator.getTopTracks();
-        generatePlaylistFile(songList, playlistFileName);
-    }
-
-    private void generateLastFmLovedPlaylist() {
-        final String playlistFileName = "lastfmloved" + PLAYLIST_FILE_EXT;
-        final List<Song> songList = playlistGenerator.getLastFmLovedTracks();
-        generatePlaylistFile(songList, playlistFileName);
-    }
-
-    private void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {
-        final String filePath = playlistDirectory + File.separator + playlistFileName;
-        final PlaylistFileWriter playlistFileWriter = new PlaylistFileWriter(filePath);
-        playlistFileWriter.writePlaylistToFile(songList);
-        System.out.println("\nPlaylist written to '" + playlistFileName + "'");
     }
 }

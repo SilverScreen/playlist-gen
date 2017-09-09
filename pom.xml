@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.william</groupId>
     <artifactId>PlaylistGen</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -57,7 +57,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.william.play.PlaylistGenCli</mainClass>
+                            <mainClass>com.william.playlistgen.PlaylistGenCli</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -75,7 +75,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.william.play.PlaylistGenCli</mainClass>
+                                    <mainClass>com.william.playlistgen.PlaylistGenCli</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
