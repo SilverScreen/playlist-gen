@@ -74,25 +74,27 @@ public class PlaylistGeneratorTest {
     @Test
     public void writePlaylistToFile_withSongList_createsPlaylistFile() {
         final String SONG_1_PATH = "path\\to\\song1.mp3";
-        Song song1 = new Song();
+        final Song song1 = new Song();
         song1.setFilePath(SONG_1_PATH);
 
         final String SONG_2_PATH = "some\\magical\\song2.mp3";
-        Song song2 = new Song();
+        final Song song2 = new Song();
         song2.setFilePath(SONG_2_PATH);
 
-        List<Song> songList = new ArrayList<>();
+        final List<Song> songList = new ArrayList<>();
         songList.add(song1);
         songList.add(song2);
 
-        String playlistFilePath = playlistFolder.getAbsolutePath() + File.separator + "some_playlist.m3u";
-        playlistGenerator.writePlaylistToFile(songList, playlistFilePath);
-        File[] playlistFolderContents = playlistFolder.listFiles();
+        final String playlistFilePath = playlistFolder.getAbsolutePath() + File.separator + "some_playlist.m3u";
+        final PlaylistFileWriter playlistFileWriter = new PlaylistFileWriter(playlistFilePath);
+        playlistFileWriter.writePlaylistToFile(songList);
+
+        final File[] playlistFolderContents = playlistFolder.listFiles();
         assertNotNull("Playlist folder should not be null", playlistFolderContents);
         assertTrue("Playlist folder '" + playlistFolder.getAbsolutePath() + "' should not be empty",
                 playlistFolderContents.length > 0);
 
-        String fileContents = readFileContents(playlistFolderContents[0]);
+        final String fileContents = readFileContents(playlistFolderContents[0]);
         assertTrue("Playlist folder should contain song 1", fileContents.contains(SONG_1_PATH));
         assertTrue("Playlist folder should contain song 2", fileContents.contains(SONG_2_PATH));
     }

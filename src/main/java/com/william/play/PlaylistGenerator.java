@@ -11,9 +11,6 @@ import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGenImpl;
 import com.william.play.database.LibraryDao;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,21 +50,5 @@ public class PlaylistGenerator {
         mp3List.retainAll(lastFmFetchedTracks);
         Collections.shuffle(mp3List);
         return mp3List;
-    }
-
-    public void writePlaylistToFile(final List<Song> mp3List, final String filename) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
-            for (Song song : mp3List) {
-                String filePath = song.getFilePath()
-                        .replace("file:/", "")
-                        .replace("%20", " ")
-                        .replace("%5B", "[")
-                        .replace("%5D", "]")
-                        .replace("/", "\\");
-                pw.write(filePath + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

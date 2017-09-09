@@ -6,23 +6,36 @@
 package com.william.play;
 
 import com.william.dev.common.utils.Song;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 /**
- *
  * @author William
  */
 public class PlaylistGenCli {
 
-    private final static String MUSIC_LIBRARY = "D:\\Music";
-    private final static String PLAYLIST_DIRECTORY = "C:\\Users\\William\\Music\\Playlists";
     private final static String PLAYLIST_FILE_EXT = ".m3u";
+    private final String musicLibrary;
+    private final String playlistDirectory;
     private final PlaylistGenerator playlistGenerator;
     private final Scanner userInput;
 
     private PlaylistGenCli() {
+        final Properties properties = new Properties();
+        try {
+            final File configProperties = new File("config.properties");
+            final FileInputStream fileInput = new FileInputStream(configProperties);
+            properties.load(fileInput);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        musicLibrary = properties.getProperty("musicLibrary");
+        playlistDirectory = properties.getProperty("playlistDirectory");
         playlistGenerator = new PlaylistGenerator();
         userInput = new Scanner(System.in);
     }
@@ -48,7 +61,7 @@ public class PlaylistGenCli {
         System.out.println();
         System.out.println("===================================");
         System.out.print("\nEnter choice -> ");
-        
+
         int menuChoice = 9999;
         if (userInput.hasNextInt()) {
             menuChoice = userInput.nextInt();
@@ -80,7 +93,7 @@ public class PlaylistGenCli {
         System.out.print("This will erase any library data you currently have. Continue (y/n)? -> ");
         final String userChoice = userInput.next();
         if (userChoiceIsYes(userChoice)) {
-            if (playlistGenerator.loadLibrary(MUSIC_LIBRARY)) {
+            if (playlistGenerator.loadLibrary(musicLibrary)) {
                 System.out.println("Library successfully loaded");
             } else {
                 System.out.println("Error occurred during loading of library");
@@ -95,18 +108,19 @@ public class PlaylistGenCli {
     private void generateLastFmTopTracksPlaylist() {
         final String playlistFileName = "lastfmtoptracks" + PLAYLIST_FILE_EXT;
         final List<Song> songList = playlistGenerator.getTopTracks();
-        writePlaylist(songList, playlistFileName);
+        generatePlaylistFile(songList, playlistFileName);
     }
 
     private void generateLastFmLovedPlaylist() {
         final String playlistFileName = "lastfmloved" + PLAYLIST_FILE_EXT;
         final List<Song> songList = playlistGenerator.getLastFmLovedTracks();
-        writePlaylist(songList, playlistFileName);
+        generatePlaylistFile(songList, playlistFileName);
     }
-    
-    private void writePlaylist(List<Song> songList, String playlistFileName) {
-        playlistGenerator.writePlaylistToFile(songList,
-                PLAYLIST_DIRECTORY + File.separator + playlistFileName);
+
+    private void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {
+        final String filePath = playlistDirectory + File.separator + playlistFileName;
+        final PlaylistFileWriter playlistFileWriter = new PlaylistFileWriter(filePath);
+        playlistFileWriter.writePlaylistToFile(songList);
         System.out.println("\nPlaylist written to '" + playlistFileName + "'");
     }
 }
