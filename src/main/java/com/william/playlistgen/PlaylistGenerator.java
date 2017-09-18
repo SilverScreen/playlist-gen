@@ -43,22 +43,19 @@ public class PlaylistGenerator {
     public void generateTopTracksPlaylist() {
         final List<Song> topTracks = lastFmPlaylistGen.getTopTracks(LAST_FM_USERNAME);
         final List<Song> songsFromDatabase = getSongsFromDatabase(topTracks);
-        final String playlistFileName = "lastfmtoptracks" + PLAYLIST_FILE_EXT;
-        generatePlaylistFile(songsFromDatabase, playlistFileName);
+        generatePlaylistFile(songsFromDatabase, "lastfmtoptracks");
     }
 
     public void generateMyLovedTracksPlaylist() {
         final List<Song> lastFmLovedTracks = lastFmPlaylistGen.getLovedTracks(LAST_FM_USERNAME);
         final List<Song> songsFromDatabase = getSongsFromDatabase(lastFmLovedTracks);
-        final String playlistFileName = "lastfmloved" + PLAYLIST_FILE_EXT;
-        generatePlaylistFile(songsFromDatabase, playlistFileName);
+        generatePlaylistFile(songsFromDatabase, "lastfmloved");
     }
 
     public void generateFriendsLovedTracksPlaylist() {
         final List<Song> friendsLovedTracks = lastFmPlaylistGen.getFriendsLastLovedTracks(LAST_FM_USERNAME);
         final List<Song> songsFromDatabase = getSongsFromDatabase(friendsLovedTracks);
-        final String playlistFileName = "friendslastfmloved" + PLAYLIST_FILE_EXT;
-        generatePlaylistFile(songsFromDatabase, playlistFileName);
+        generatePlaylistFile(songsFromDatabase, "friendslastfmloved");
     }
 
     private List<Song> getSongsFromDatabase(final List<Song> lastFmFetchedTracks) {
@@ -69,11 +66,12 @@ public class PlaylistGenerator {
     }
 
     private void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {
+        final String playlistFile = playlistFileName + PLAYLIST_FILE_EXT;
         if (!songList.isEmpty()) {
-            final String filePath = playlistDirectory + File.separator + playlistFileName;
+            final String filePath = playlistDirectory + File.separator + playlistFile;
             final PlaylistFileWriter playlistFileWriter = new PlaylistFileWriter(filePath);
             playlistFileWriter.writePlaylistToFile(songList);
-            System.out.println("\nPlaylist written to '" + playlistFileName + "'");
+            System.out.println("\nPlaylist written to '" + playlistFile + "'");
         } else {
             System.out.println("No matching songs found. Playlist not generated");
         }
