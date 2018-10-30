@@ -5,10 +5,8 @@
  */
 package com.william.playlistgen;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import com.william.playlistgen.properties.PlaylistGenProperties;
+
 import java.util.Scanner;
 
 /**
@@ -16,23 +14,18 @@ import java.util.Scanner;
  */
 public class PlaylistGenCli {
 
+    private static final String CHARSET = "UTF-8";
+    private static final String CONFIG_PROPERTIES_DEFAULT = "config.properties";
     private final String musicLibrary;
     private final PlaylistGenerator playlistGenerator;
     private final Scanner userInput;
 
     private PlaylistGenCli() {
-        final Properties properties = new Properties();
-        try {
-            final File configProperties = new File("config.properties");
-            final FileInputStream fileInput = new FileInputStream(configProperties);
-            properties.load(fileInput);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
+        final PlaylistGenProperties properties = new PlaylistGenProperties(CONFIG_PROPERTIES_DEFAULT);
         musicLibrary = properties.getProperty("musicLibrary");
         final String playlistDirectory = properties.getProperty("playlistDirectory");
         playlistGenerator = new PlaylistGenerator(playlistDirectory);
-        userInput = new Scanner(System.in);
+        userInput = new Scanner(System.in, CHARSET);
     }
 
     public static void main(final String[] args) {
