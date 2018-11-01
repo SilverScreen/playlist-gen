@@ -13,6 +13,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,10 +24,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class PlaylistGeneratorTest {
 
-    private static final String FILE_SEPARATOR = File.separator;
-    private static final String MUSIC_DIRECTORY = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources"
-            + FILE_SEPARATOR + "testMp3Folder";
-    private static final String NON_EXISTENT_MUSIC_DIRECTORY = "C:\\non\\existent\\directory";
+    private static final String NON_EXISTENT_MUSIC_DIRECTORY = "non_existent_directory";
+    private String musicLibraryPath;
     private File playlistFolder;
     private PlaylistGenerator objUnderTest;
 
@@ -35,8 +34,15 @@ public class PlaylistGeneratorTest {
 
     @Before
     public void setUp() throws IOException {
+        musicLibraryPath = getMusicLibraryPath();
         playlistFolder = testFolder.newFolder("PlaylistFolder");
         objUnderTest = new PlaylistGenerator(playlistFolder.getAbsolutePath());
+    }
+
+    private String getMusicLibraryPath() {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final URL url = classLoader.getResource("testMp3Folder");
+        return url != null ? url.getPath() : "";
     }
 
     @After
@@ -46,7 +52,7 @@ public class PlaylistGeneratorTest {
 
     @Test
     public void generateTopTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(MUSIC_DIRECTORY));
+        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
         objUnderTest.generateTopTracksPlaylist();
         assertPlaylistFileCreated("lastfmtoptracks.m3u");
     }
@@ -60,7 +66,7 @@ public class PlaylistGeneratorTest {
 
     @Test
     public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(MUSIC_DIRECTORY));
+        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
         objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileCreated("lastfmloved.m3u");
     }
@@ -74,7 +80,7 @@ public class PlaylistGeneratorTest {
 
     @Test
     public void generateFriendsLovedTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(MUSIC_DIRECTORY));
+        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
         objUnderTest.generateFriendsLovedTracksPlaylist();
         assertPlaylistFileCreated("friendslastfmloved.m3u");
     }

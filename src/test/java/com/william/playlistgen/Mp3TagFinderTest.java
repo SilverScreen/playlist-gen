@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,10 +25,8 @@ public class Mp3TagFinderTest {
     private static final String ARTIST_NOT_FOUND = "The Doors";
     private static final String SONG_TITLE = "All I Need";
     private static final String ALBUM_NAME = "Moon Safari";
-    private static final String FILE_SEPARATOR = File.separator;
-    private static final String FILE_PATH = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources"
-            + FILE_SEPARATOR + "testMp3Folder" + FILE_SEPARATOR + "03 All I Need.mp3";
-    private static final String FILE_PATH_NOT_FOUND = "C:\\usghhsuhuu4782";
+    private static final String MP3_FILE_NAME = "testMp3Folder" + File.separator + "03 All I Need.mp3";
+    private static final String FILE_PATH_NOT_FOUND = "usghhsuhuu4782";
 
     private Mp3TagFinder mp3TagFinder;
     private Mp3TagFinder mp3TagFinderFileNotFound;
@@ -36,10 +35,16 @@ public class Mp3TagFinderTest {
 
     @Before
     public void setUp() {
-        mp3File = new File(FILE_PATH);
+        mp3File = getMp3File();
         mp3TagFinder = new Mp3TagFinder(mp3File);
         mp3FileWhichDoesNotExist = new File(FILE_PATH_NOT_FOUND);
         mp3TagFinderFileNotFound = new Mp3TagFinder(mp3FileWhichDoesNotExist);
+    }
+
+    private File getMp3File() {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final URL fileUrl = classLoader.getResource(MP3_FILE_NAME);
+        return fileUrl == null ? null : new File(fileUrl.getPath());
     }
 
     @After

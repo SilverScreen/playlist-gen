@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -19,21 +20,26 @@ import static org.junit.Assert.assertTrue;
  */
 public class FileScannerTest {
 
+    private static final String MUSIC_DIRECTORY_NOT_FOUND = "something";
+    private String musicLibraryPath;
     private FileScanner fileScanner;
     private File musicDirectory;
-    private static final String FILE_SEPARATOR = File.separator;
-    private static final String MUSIC_DIRECTORY = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources"
-            + FILE_SEPARATOR + "testMp3Folder";
-    private static final String MUSIC_DIRECTORY_NOT_FOUND = "E:\\Music";
 
     @Before
     public void setUp() {
+        musicLibraryPath = getMusicLibraryPath();
         fileScanner = new FileScanner();
+    }
+
+    private String getMusicLibraryPath() {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final URL url = classLoader.getResource("testMp3Folder");
+        return url != null ? url.getPath() : "";
     }
 
     @Test
     public void getMp3SongListSuccessfully() {
-        musicDirectory = new File(MUSIC_DIRECTORY);
+        musicDirectory = new File(musicLibraryPath);
         final List<Song> results = fileScanner.getMp3SongList(musicDirectory);
         assertTrue("Number of songs returned should be 7", results.size() == 7);
     }

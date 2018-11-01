@@ -21,13 +21,14 @@ import java.util.logging.Logger;
  */
 public class Mp3TagFinder {
 
+    private static final String WHITESPACE = "%20";
     private Mp3File mp3File;
     private ID3v2 id3v2Tag;
     private ID3v1 id3v1Tag;
 
     public Mp3TagFinder(final File file) {
         try {
-            mp3File = new Mp3File(file.getAbsolutePath());
+            mp3File = new Mp3File(file.getAbsolutePath().replaceAll(WHITESPACE, " "));
             id3v2Tag = mp3File.getId3v2Tag();
             id3v1Tag = mp3File.getId3v1Tag();
         } catch (IOException | UnsupportedTagException | InvalidDataException ex) {
