@@ -6,7 +6,8 @@
 package com.william.playlistgen.file;
 
 import com.william.dev.common.utils.Song;
-import com.william.playlistgen.Mp3TagFinder;
+import com.william.playlistgen.mp3tagreader.Mp3TagReader;
+import com.william.playlistgen.mp3tagreader.Mp3TagReaderFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -59,11 +60,11 @@ public class FileScanner implements FilenameFilter {
     }
 
     private void addSongDetailsFromFile(final File file, final List<Song> mp3SongList) throws MalformedURLException {
-        final Mp3TagFinder mp3TagFinder = new Mp3TagFinder(file);
+        final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.create(file);
         final Song song = new Song();
-        song.setTitle(mp3TagFinder.getSongTitle());
-        song.setArtist(mp3TagFinder.getArtist());
-        song.setAlbum(mp3TagFinder.getAlbum());
+        song.setTitle(mp3TagReader.getSongTitle());
+        song.setArtist(mp3TagReader.getArtist());
+        song.setAlbum(mp3TagReader.getAlbum());
         song.setFilePath(file.toURI().toURL().toString());
         mp3SongList.add(song);
     }
