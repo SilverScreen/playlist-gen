@@ -6,23 +6,33 @@
 package com.william.playlistgen.database;
 
 import com.william.dev.common.utils.Song;
+import com.william.playlistgen.validation.SongDataValidator;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.william.playlistgen.database.LibrarySqlStatements.CREATE_TABLE_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.DROP_TABLE_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.INSERT_SONG_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_ALL_SONGS;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_ALBUM_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_ARTIST_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_SONG_SQL;
+
 /**
- *
  * @author William
  */
 public class LibraryDao {
 
-    private final String tableName = "MyMusic";
+    private static final String DATABASE_NAME = "jdbc:sqlite:test.db";
+    private static final String tableName = "MyMusic";
     private static LibraryDao instance = null;
 
     private LibraryDao() {
@@ -36,128 +46,144 @@ public class LibraryDao {
     }
 
     public boolean createTable() {
-        connectionSetup();
-        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-                Statement statement = connection.createStatement();) {
-            String dropTableSql = "DROP TABLE IF EXISTS " + tableName;
-            statement.execute(dropTableSql);
-
-            String createTableSql = "CREATE TABLE " + tableName + "("
-                    + "title    TEXT    NOT NULL,"
-                    + "artist   TEXT    NOT NULL,"
-                    + "album    TEXT    NOT NULL,"
-                    + "path     TEXT    NOT NULL)";
-            statement.executeUpdate(createTableSql);
+        loadJdbcClass();
+        if (!dropTable()) {
+            return false;
+        }
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement createTableStatement = connection.prepareStatement(CREATE_TABLE_SQL)) {
+            createTableStatement.executeUpdate();
             System.out.println("Table '" + tableName + "' created successfully!");
             return true;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             return false;
         }
     }
 
-    public boolean insert(List<Song> songList) {
-        connectionSetup();
-        Connection connection;
-        Statement statement;
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-            statement = connection.createStatement();
-        } catch (SQLException e) {
+    private boolean dropTable() {
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement dropTableStatement = connection.prepareStatement(DROP_TABLE_SQL)) {
+            dropTableStatement.executeUpdate();
+        } catch (final SQLException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             return false;
         }
-        boolean allDataEnteredSuccessfully = true;
-        int numberOfSongsSuccessfullyEntered = 0;
-        for (Song song : songList) {
-            String title = formatSingleQuotes(song.getTitle());
-            String artist = formatSingleQuotes(song.getArtist());
-            String album = formatSingleQuotes(song.getAlbum());
-            String filePath = formatSingleQuotes(song.getFilePath());
+        return true;
+    }
 
-            String insertSql = ""
-                    + "INSERT INTO " + tableName + "(title, artist, album, path)"
-                    + " VALUES ('" + title + "', '" + artist + "', '" + album + "', '" + filePath + "')";
-            try {
-                statement.executeUpdate(insertSql);
+    public boolean insert(final List<Song> songList) {
+        boolean allDataEnteredSuccessfully = true;
+        loadJdbcClass();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME)) {
+            int numberOfSongsSuccessfullyEntered = 0;
+            for (final Song song : songList) {
+                if (!SongDataValidator.isValid(song)) {
+                    System.out.println("Skipping song with invalid data...");
+                    allDataEnteredSuccessfully = false;
+                    continue;
+                }
+                allDataEnteredSuccessfully = insertSong(connection, song);
                 numberOfSongsSuccessfullyEntered++;
                 System.out.print("Entered " + numberOfSongsSuccessfullyEntered + " / " + songList.size() + " songs\r");
-            } catch (SQLException ex) {
-                Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
-                allDataEnteredSuccessfully = false;
             }
-        }
-        try {
-            connection.close();
-        } catch (SQLException ex) {
+        } catch (final SQLException ex) {
             Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            allDataEnteredSuccessfully = false;
         }
         return allDataEnteredSuccessfully;
     }
 
-    private String formatSingleQuotes(String stringToFormat) {
+    private boolean insertSong(final Connection connection, final Song song) {
+        try (final PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SONG_SQL)) {
+            preparedStatement.setString(1, formatSingleQuotes(song.getTitle()));
+            preparedStatement.setString(2, formatSingleQuotes(song.getArtist()));
+            preparedStatement.setString(3, formatSingleQuotes(song.getAlbum()));
+            preparedStatement.setString(4, formatSingleQuotes(song.getFilePath()));
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+
+    private String formatSingleQuotes(final String stringToFormat) {
         if (stringToFormat == null) {
-            return stringToFormat;
+            return null;
         } else {
             return stringToFormat.replace("'", "''");
         }
     }
 
-    public List<Song> retrieveByArtist(String artist) {
-        String sqlStatementToExecute = ""
-                + "SELECT * FROM " + tableName + " "
-                + "WHERE LOWER(artist) = LOWER('" + formatSingleQuotes(artist) + "')";
-        return getResultsFromSqlStatement(sqlStatementToExecute);
-    }
-
-    public List<Song> retrieveByAlbum(String artist, String album) {
-        String sqlStatementToExecute = ""
-                + "SELECT * FROM " + tableName + " "
-                + "WHERE LOWER(artist) = LOWER('" + formatSingleQuotes(artist) + "') "
-                + "AND LOWER(album) = LOWER('" + formatSingleQuotes(album) + "')";
-        return getResultsFromSqlStatement(sqlStatementToExecute);
-    }
-
-    public Song retrieveBySong(String artist, String title) {
-        String sqlStatementToExecute = ""
-                + "SELECT * FROM " + tableName + " "
-                + "WHERE LOWER(artist) = LOWER('" + formatSingleQuotes(artist) + "') "
-                + "AND LOWER(title) = LOWER('" + formatSingleQuotes(title) + "')";
-        List<Song> resultSongList = getResultsFromSqlStatement(sqlStatementToExecute);
-        if (resultSongList.isEmpty()) {
-            return null;
-        } else {
-            return resultSongList.get(0);
+    public List<Song> retrieveByArtist(final String artist) {
+        List<Song> songsByArtist = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_ARTIST_SQL)) {
+            statement.setString(1, formatSingleQuotes(artist));
+            songsByArtist = getResultsFromPreparedStatement(statement);
+        } catch (final SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return songsByArtist;
+    }
+
+    public List<Song> retrieveByAlbum(final String artist, final String album) {
+        List<Song> songsByAlbum = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_ALBUM_SQL)) {
+            statement.setString(1, formatSingleQuotes(artist));
+            statement.setString(2, formatSingleQuotes(album));
+            songsByAlbum = getResultsFromPreparedStatement(statement);
+        } catch (final SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return songsByAlbum;
+    }
+
+    public Song retrieveBySong(final String artist, final String title) {
+        List<Song> songs = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_SONG_SQL)) {
+            statement.setString(1, formatSingleQuotes(artist));
+            statement.setString(2, formatSingleQuotes(title));
+            songs = getResultsFromPreparedStatement(statement);
+        } catch (final SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return songs.isEmpty() ? null : songs.get(0);
     }
 
     public List<Song> retrieveAllSongs() {
-        String sqlStatement = "SELECT * FROM " + tableName;
-        return getResultsFromSqlStatement(sqlStatement);
+        List<Song> allSongs = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_ALL_SONGS)) {
+            allSongs = getResultsFromPreparedStatement(statement);
+        } catch (final SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return allSongs;
     }
 
-    private List<Song> getResultsFromSqlStatement(String sqlStatementToExecute) {
-        connectionSetup();
-        List<Song> resultSongList = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-                Statement statement = connection.createStatement();) {
-            ResultSet resultSet = statement.executeQuery(sqlStatementToExecute);
-
+    private List<Song> getResultsFromPreparedStatement(final PreparedStatement statement) {
+        final List<Song> songs = new ArrayList<>();
+        try (final ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Song song = new Song();
                 song.setTitle(resultSet.getString("title"));
                 song.setArtist(resultSet.getString("artist"));
                 song.setAlbum(resultSet.getString("album"));
                 song.setFilePath(resultSet.getString("path"));
-                resultSongList.add(song);
+                songs.add(song);
             }
-        } catch (SQLException e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        } catch (final SQLException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return resultSongList;
+        return songs;
     }
 
-    private void connectionSetup() {
+    private void loadJdbcClass() {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ex) {

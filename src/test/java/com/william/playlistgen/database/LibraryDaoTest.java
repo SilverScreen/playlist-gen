@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -31,7 +32,6 @@ public class LibraryDaoTest {
     private Song song2;
     private Song song3;
     private Song song4;
-    private Song song5;
 
     @Before
     public void setUpBeforeClass() {
@@ -41,16 +41,14 @@ public class LibraryDaoTest {
         song2 = createSong("Sexy Boy", "Air", "Moon Safari", TEST_FOLDER + "02 Sexy Boy.mp3");
         song3 = createSong("New Noise", "Refused", "The Shape of Punk to Come", TEST_FOLDER + "06 New Noise.mp3");
         song4 = new Song(1, "'Test'", "Blah's", "\"test\"", "2017", "D:\\Music\\test\\\'test\'\\09. test.mp3", null);
-        song5 = new Song(0, null, null, null, null, null, null);
 
         assertTrue(libraryDao.createTable());
-        List<Song> songList = new ArrayList<>();
-        songList.add(song1);
-        songList.add(song2);
-        songList.add(song3);
-        songList.add(song4);
-        songList.add(song5);
-        assertTrue(libraryDao.insert(songList));
+        List<Song> songs = new ArrayList<>();
+        songs.add(song1);
+        songs.add(song2);
+        songs.add(song3);
+        songs.add(song4);
+        assertTrue(libraryDao.insert(songs));
     }
 
     private Song createSong(final String title, final String artist, final String album, final String filePath) {
@@ -65,6 +63,14 @@ public class LibraryDaoTest {
     @After
     public void tearDownAfterClass() {
         libraryDao = null;
+    }
+
+    @Test
+    public void testInsertNullDataIntoDb() {
+        final Song invalidSong = new Song(0, null, null, null, null, null, null);
+        final List<Song> invalidSongs = new ArrayList<>();
+        invalidSongs.add(invalidSong);
+        assertFalse(libraryDao.insert(invalidSongs));
     }
 
     @Test
@@ -122,6 +128,6 @@ public class LibraryDaoTest {
     @Test
     public void retrieveAllSongs_getsSongsSuccessfully() {
         final List<Song> songList = libraryDao.retrieveAllSongs();
-        assertEquals("Number of songs retrieve should be 5", 5, songList.size());
+        assertEquals("Number of songs retrieve should be 4", 4, songList.size());
     }
 }
