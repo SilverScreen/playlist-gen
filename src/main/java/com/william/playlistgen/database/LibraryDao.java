@@ -40,13 +40,21 @@ public class LibraryDao {
 
     public static LibraryDao getInstance() {
         if (instance == null) {
+            loadJdbcDriver();
             instance = new LibraryDao();
         }
         return instance;
     }
 
+    private static void loadJdbcDriver() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public boolean createTable() {
-        loadJdbcClass();
         if (!dropTable()) {
             return false;
         }
@@ -61,7 +69,7 @@ public class LibraryDao {
         }
     }
 
-    private boolean dropTable() {
+    public boolean dropTable() {
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
              final PreparedStatement dropTableStatement = connection.prepareStatement(DROP_TABLE_SQL)) {
             dropTableStatement.executeUpdate();
@@ -74,7 +82,6 @@ public class LibraryDao {
 
     public boolean insert(final List<Song> songList) {
         boolean allDataEnteredSuccessfully = true;
-        loadJdbcClass();
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME)) {
             int numberOfSongsSuccessfullyEntered = 0;
             for (final Song song : songList) {
@@ -181,13 +188,5 @@ public class LibraryDao {
             Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return songs;
-    }
-
-    private void loadJdbcClass() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

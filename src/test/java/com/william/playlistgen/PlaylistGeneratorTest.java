@@ -52,42 +52,42 @@ public class PlaylistGeneratorTest {
 
     @Test
     public void generateTopTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
+        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateTopTracksPlaylist();
         assertPlaylistFileCreated("lastfmtoptracks.m3u");
     }
 
     @Test
     public void generateTopTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        assertTrue(objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY));
+        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
         objUnderTest.generateTopTracksPlaylist();
         assertPlaylistFileNotCreated();
     }
 
     @Test
     public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
+        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileCreated("lastfmloved.m3u");
     }
 
     @Test
     public void generateMyLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        assertTrue(objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY));
+        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
         objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileNotCreated();
     }
 
     @Test
     public void generateFriendsLovedTracksPlaylist_successfullyGeneratesFile() {
-        assertTrue(objUnderTest.loadLibrary(musicLibraryPath));
+        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateFriendsLovedTracksPlaylist();
         assertPlaylistFileCreated("friendslastfmloved.m3u");
     }
 
     @Test
     public void generateFriendsLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        assertTrue(objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY));
+        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
         objUnderTest.generateFriendsLovedTracksPlaylist();
         assertPlaylistFileNotCreated();
     }

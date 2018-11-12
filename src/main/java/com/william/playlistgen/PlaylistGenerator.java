@@ -9,7 +9,7 @@ import com.william.dev.common.utils.Song;
 import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGen;
 import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGenImpl;
 import com.william.playlistgen.database.LibraryDao;
-import com.william.playlistgen.file.FileScanner;
+import com.william.playlistgen.file.MusicLibraryScanner;
 import com.william.playlistgen.file.PlaylistFileWriter;
 
 import java.io.File;
@@ -24,20 +24,18 @@ public class PlaylistGenerator {
     private static final String LAST_FM_USERNAME = "Zero1986";
     private final static String PLAYLIST_FILE_EXT = ".m3u";
     private final LastFmPlaylistGen lastFmPlaylistGen;
-    private final FileScanner fileScanner;
     private final LibraryDao libraryDao;
     private final String playlistDirectory;
 
     public PlaylistGenerator(final String playlistDirectory) {
         lastFmPlaylistGen = new LastFmPlaylistGenImpl();
-        fileScanner = new FileScanner();
         libraryDao = LibraryDao.getInstance();
         this.playlistDirectory = playlistDirectory;
     }
 
-    public boolean loadLibrary(final String musicLibraryPath) {
-        final List<Song> songList = fileScanner.getMp3SongList(new File(musicLibraryPath));
-        return libraryDao.createTable() && libraryDao.insert(songList);
+    public void loadLibrary(final String musicLibraryPath) {
+        final MusicLibraryScanner libraryScanner = new MusicLibraryScanner(new File(musicLibraryPath));
+        libraryScanner.start();
     }
 
     public void generateTopTracksPlaylist() {

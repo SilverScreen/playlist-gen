@@ -63,7 +63,7 @@ public class PlaylistGenCli {
     private void handleUserInput(final int optionSelected) {
         switch (optionSelected) {
             case 1:
-                loadLocalLibrary();
+                loadMusicLibrary();
                 break;
             case 2:
                 playlistGenerator.generateTopTracksPlaylist();
@@ -81,15 +81,11 @@ public class PlaylistGenCli {
         }
     }
 
-    private void loadLocalLibrary() {
+    private void loadMusicLibrary() {
         System.out.print("This will erase any library data you currently have. Continue (y/n)? -> ");
         final String userChoice = userInput.next();
         if (userChoiceIsYes(userChoice)) {
-            if (playlistGenerator.loadLibrary(musicLibrary)) {
-                System.out.println("Library successfully loaded");
-            } else {
-                System.out.println("Error occurred during loading of library");
-            }
+            playlistGenerator.loadLibrary(musicLibrary);
         }
     }
 
