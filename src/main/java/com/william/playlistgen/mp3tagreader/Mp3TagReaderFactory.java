@@ -21,7 +21,7 @@ public class Mp3TagReaderFactory {
 
     private static final String WHITESPACE = "%20";
 
-    public static Mp3TagReader create(final File file) {
+    public static Mp3TagReader getTagReader(final File file) {
         Mp3TagReader mp3TagReader = null;
         try {
             final Mp3File mp3File = new Mp3File(file.getAbsolutePath().replaceAll(WHITESPACE, " "));

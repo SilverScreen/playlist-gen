@@ -60,7 +60,7 @@ public class FileScanner implements FilenameFilter {
     }
 
     private void addSongDetailsFromFile(final File file, final List<Song> mp3SongList) throws MalformedURLException {
-        final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.create(file);
+        final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.getTagReader(file);
         final Song song = new Song();
         song.setTitle(mp3TagReader.getSongTitle());
         song.setArtist(mp3TagReader.getArtist());

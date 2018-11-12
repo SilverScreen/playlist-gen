@@ -30,7 +30,7 @@ public class Mp3TagReaderTest {
 
     @Before
     public void setUp() {
-        objUnderTest = Mp3TagReaderFactory.create(getMp3File(MP3_FILE_NAME));
+        objUnderTest = Mp3TagReaderFactory.getTagReader(getMp3File(MP3_FILE_NAME));
     }
 
     private File getMp3File(final String fileName) {
@@ -61,7 +61,7 @@ public class Mp3TagReaderTest {
 
     @Test
     public void testFileNotFound() {
-        objUnderTest = Mp3TagReaderFactory.create(new File(FILE_PATH_NOT_FOUND));
+        objUnderTest = Mp3TagReaderFactory.getTagReader(new File(FILE_PATH_NOT_FOUND));
         assertNull(objUnderTest);
     }
 }
