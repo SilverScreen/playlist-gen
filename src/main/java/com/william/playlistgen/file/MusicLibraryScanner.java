@@ -55,7 +55,10 @@ public class MusicLibraryScanner implements FilenameFilter {
     private void processMp3File(final List<Song> songs, final File currentFile) {
         System.out.println("Found MP3 file: " + currentFile.getName());
         try {
-            songs.add(getSongDetailsFromFile(currentFile));
+            final Song song = getSongDetailsFromFile(currentFile);
+            if (song != null) {
+                songs.add(song);
+            }
         } catch (final MalformedURLException ex) {
             Logger.getLogger(MusicLibraryScanner.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -63,11 +66,16 @@ public class MusicLibraryScanner implements FilenameFilter {
 
     private Song getSongDetailsFromFile(final File mp3File) throws MalformedURLException {
         final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.getTagReader(mp3File);
-        final Song song = new Song();
-        song.setTitle(mp3TagReader.getSongTitle());
-        song.setArtist(mp3TagReader.getArtist());
-        song.setAlbum(mp3TagReader.getAlbum());
-        song.setFilePath(mp3File.toURI().toURL().toString());
-        return song;
+        try {
+            final Song song = new Song();
+            song.setTitle(mp3TagReader.getSongTitle());
+            song.setArtist(mp3TagReader.getArtist());
+            song.setAlbum(mp3TagReader.getAlbum());
+            song.setFilePath(mp3File.toURI().toURL().toString());
+            return song;
+        } catch (final Exception ex) {
+            Logger.getLogger(MusicLibraryScanner.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
