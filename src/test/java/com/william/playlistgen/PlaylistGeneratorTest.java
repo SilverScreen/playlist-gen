@@ -5,6 +5,7 @@
  */
 package com.william.playlistgen;
 
+import com.william.playlistgen.database.LibraryDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,8 +25,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class PlaylistGeneratorTest {
 
-    private static final String NON_EXISTENT_MUSIC_DIRECTORY = "non_existent_directory";
-    private String musicLibraryPath;
     private File playlistFolder;
     private PlaylistGenerator objUnderTest;
 
@@ -33,10 +32,10 @@ public class PlaylistGeneratorTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Before
-    public void setUp() throws IOException {
-        musicLibraryPath = getMusicLibraryPath();
+    public void setup() throws IOException {
         playlistFolder = testFolder.newFolder("PlaylistFolder");
         objUnderTest = new PlaylistGenerator(playlistFolder.getAbsolutePath());
+        objUnderTest.loadLibrary(getMusicLibraryPath());
     }
 
     private String getMusicLibraryPath() {
@@ -47,49 +46,25 @@ public class PlaylistGeneratorTest {
 
     @After
     public void tearDown() {
-        objUnderTest = null;
+        LibraryDao.getInstance().dropTable();
     }
 
     @Test
     public void generateTopTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateTopTracksPlaylist();
         assertPlaylistFileCreated("lastfmtoptracks.m3u");
     }
 
     @Test
-    public void generateTopTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
-        objUnderTest.generateTopTracksPlaylist();
-        assertPlaylistFileNotCreated();
-    }
-
-    @Test
     public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileCreated("lastfmloved.m3u");
     }
 
     @Test
-    public void generateMyLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
-        objUnderTest.generateMyLovedTracksPlaylist();
-        assertPlaylistFileNotCreated();
-    }
-
-    @Test
     public void generateFriendsLovedTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.loadLibrary(musicLibraryPath);
         objUnderTest.generateFriendsLovedTracksPlaylist();
         assertPlaylistFileCreated("friendslastfmloved.m3u");
-    }
-
-    @Test
-    public void generateFriendsLovedTracksPlaylist_withEmptyMusicLibrary_doesNotGenerateFile() {
-        objUnderTest.loadLibrary(NON_EXISTENT_MUSIC_DIRECTORY);
-        objUnderTest.generateFriendsLovedTracksPlaylist();
-        assertPlaylistFileNotCreated();
     }
 
     private void assertPlaylistFileCreated(final String expectedFile) {

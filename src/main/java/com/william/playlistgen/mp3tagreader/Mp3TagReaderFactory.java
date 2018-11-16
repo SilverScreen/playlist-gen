@@ -24,7 +24,8 @@ public class Mp3TagReaderFactory {
     public static Mp3TagReader getTagReader(final File file) {
         Mp3TagReader mp3TagReader = null;
         try {
-            final Mp3File mp3File = new Mp3File(file.getAbsolutePath().replaceAll(WHITESPACE, " "));
+            final String filePath = file.getAbsolutePath().replaceAll(WHITESPACE, " ");
+            final Mp3File mp3File = new Mp3File(filePath);
             if (mp3File.hasId3v1Tag()) {
                 mp3TagReader = new Id3v1Mp3TagReader(mp3File.getId3v1Tag());
             } else if (mp3File.hasId3v2Tag()) {

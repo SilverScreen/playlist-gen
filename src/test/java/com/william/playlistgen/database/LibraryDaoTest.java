@@ -34,7 +34,7 @@ public class LibraryDaoTest {
     private Song song4;
 
     @Before
-    public void setUpBeforeClass() {
+    public void setup() {
         libraryDao = LibraryDao.getInstance();
         song1 = createSong("Fade Into You", "Mazzy Star", "So Tonight That I Might See",
                 TEST_FOLDER + "01 Fade Into You");
@@ -61,7 +61,8 @@ public class LibraryDaoTest {
     }
 
     @After
-    public void tearDownAfterClass() {
+    public void teardown() {
+        libraryDao.dropTable();
         libraryDao = null;
     }
 

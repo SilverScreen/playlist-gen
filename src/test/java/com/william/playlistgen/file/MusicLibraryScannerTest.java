@@ -2,10 +2,10 @@ package com.william.playlistgen.file;
 
 import com.william.dev.common.utils.Song;
 import com.william.playlistgen.database.LibraryDao;
+import com.william.playlistgen.exception.DirectoryNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -31,19 +31,15 @@ public class MusicLibraryScannerTest {
     }
 
     @Test
-    public void processMusicFolderSuccessfully() {
-        final String musicLibraryPath = getMusicLibraryPath();
-        objUnderTest = new MusicLibraryScanner(new File(musicLibraryPath));
+    public void processMusicFolderSuccessfully() throws Exception {
+        objUnderTest = new MusicLibraryScanner(getMusicLibraryPath());
         objUnderTest.start();
         final List<Song> allSongsEntered = libraryDao.retrieveAllSongs();
         assertEquals("The number of songs entered should be 7", 7, allSongsEntered.size());
     }
 
-    @Test
-    public void processNonExistentMusicFolder() {
-        objUnderTest = new MusicLibraryScanner(new File("non_existent_path"));
-        objUnderTest.start();
-        final List<Song> allSongsEntered = libraryDao.retrieveAllSongs();
-        assertEquals("The number of songs entered should be 0", 0, allSongsEntered.size());
+    @Test(expected = DirectoryNotFoundException.class)
+    public void processMusicFolderWithNonExistentDirectory() throws Exception {
+        objUnderTest = new MusicLibraryScanner("some_directory");
     }
 }

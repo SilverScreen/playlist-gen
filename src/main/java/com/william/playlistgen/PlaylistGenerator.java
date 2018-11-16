@@ -9,12 +9,15 @@ import com.william.dev.common.utils.Song;
 import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGen;
 import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGenImpl;
 import com.william.playlistgen.database.LibraryDao;
+import com.william.playlistgen.exception.DirectoryNotFoundException;
 import com.william.playlistgen.file.MusicLibraryScanner;
 import com.william.playlistgen.file.PlaylistFileWriter;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author William
@@ -34,8 +37,12 @@ public class PlaylistGenerator {
     }
 
     public void loadLibrary(final String musicLibraryPath) {
-        final MusicLibraryScanner libraryScanner = new MusicLibraryScanner(new File(musicLibraryPath));
-        libraryScanner.start();
+        try {
+            final MusicLibraryScanner libraryScanner = new MusicLibraryScanner(musicLibraryPath);
+            libraryScanner.start();
+        } catch (final DirectoryNotFoundException ex) {
+            Logger.getLogger(PlaylistGenerator.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void generateTopTracksPlaylist() {
