@@ -40,7 +40,7 @@ public class PlaylistGenerator {
     public void loadLibrary(final String musicLibraryPath) {
         try {
             final MusicLibraryScanner libraryScanner = new MusicLibraryScanner(musicLibraryPath);
-            libraryScanner.start();
+            libraryScanner.startScan();
         } catch (final DirectoryNotFoundException ex) {
             LOGGER.error("Error loading music library [{}]", musicLibraryPath, ex);
         }

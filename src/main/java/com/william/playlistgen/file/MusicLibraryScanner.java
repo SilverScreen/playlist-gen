@@ -47,7 +47,7 @@ public class MusicLibraryScanner implements FilenameFilter {
         return name.endsWith(CODEC_MP3);
     }
 
-    public void start() {
+    public void startScan() {
         final long startTime = System.currentTimeMillis();
         libraryDao.dropTable();
         libraryDao.createTable();
@@ -56,6 +56,7 @@ public class MusicLibraryScanner implements FilenameFilter {
     }
 
     private void processDirectory(final Path directory) {
+        final long start = System.currentTimeMillis();
         final List<Song> songs = new ArrayList<>();
         try {
             final DirectoryStream<Path> filesInCurrentDirectory = Files.newDirectoryStream(directory);
@@ -71,6 +72,7 @@ public class MusicLibraryScanner implements FilenameFilter {
         }
         LOGGER.info("Inserting [{}] songs into music database", songs.size());
         libraryDao.insert(songs);
+        LOGGER.info("Processed directory [{}] in [{}] ms", directory, System.currentTimeMillis() - start);
     }
 
     private void processMp3File(final List<Song> songs, final File currentFile) {

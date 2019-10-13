@@ -33,7 +33,7 @@ public class MusicLibraryScannerTest {
     @Test
     public void processMusicFolderSuccessfully() throws Exception {
         objUnderTest = new MusicLibraryScanner(getMusicLibraryPath());
-        objUnderTest.start();
+        objUnderTest.startScan();
         final List<Song> allSongsEntered = libraryDao.retrieveAllSongs();
         assertEquals("The number of songs entered should be 7", 7, allSongsEntered.size());
     }

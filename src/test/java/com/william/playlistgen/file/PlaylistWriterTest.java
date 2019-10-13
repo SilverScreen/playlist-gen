@@ -10,15 +10,16 @@ import org.junit.rules.TemporaryFolder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -64,6 +65,13 @@ public class PlaylistWriterTest {
         final String fileContents = readFileContents(playlistFolderContents[0]);
         assertTrue("Playlist folder should contain song 1", fileContents.contains(song1Path));
         assertTrue("Playlist folder should contain song 2", fileContents.contains(song2Path));
+    }
+
+    @Test
+    public void writePlaylistToFile_withEmptySongList_doesNotCreateFile() {
+        objUnderTest.writePlaylistToFile(new ArrayList<>());
+        assertNotNull(playlistFolder.listFiles());
+        assertEquals("Playlist folder should be empty", 0, Objects.requireNonNull(playlistFolder.listFiles()).length);
     }
 
     private String readFileContents(final File playlistFile) {

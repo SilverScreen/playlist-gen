@@ -1,6 +1,8 @@
 package com.william.playlistgen.file;
 
 import com.william.dev.common.utils.Song;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,13 +15,18 @@ import java.util.List;
  */
 public class PlaylistFileWriter {
 
-    public final String filename;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistFileWriter.class);
+    private final String filename;
 
     public PlaylistFileWriter(final String filename) {
         this.filename = filename;
     }
 
     public void writePlaylistToFile(final List<Song> mp3List) {
+        if (mp3List.isEmpty()) {
+            LOGGER.warn("Song list is empty. Not writing playlist to file");
+            return;
+        }
         try (final OutputStreamWriter writer
                      = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {
             for (final Song song : mp3List) {
@@ -31,8 +38,8 @@ public class PlaylistFileWriter {
                         .replace("/", "\\");
                 writer.write(filePath);
             }
-        } catch (final IOException e) {
-            e.printStackTrace();
+        } catch (final IOException ex) {
+            LOGGER.error("Error writing playlist to file", ex);
         }
     }
 }
