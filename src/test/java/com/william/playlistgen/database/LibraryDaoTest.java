@@ -77,7 +77,7 @@ public class LibraryDaoTest {
     @Test
     public void testDataRetrieveByArtist() {
         final List<Song> songList = libraryDao.retrieveByArtist("Air");
-        assertTrue("Song list should not be empty", !songList.isEmpty());
+        assertFalse("Song list should not be empty", songList.isEmpty());
         final String resultFilePath = songList.get(0).getFilePath();
         assertEquals("File paths should be the same", song2.getFilePath(), resultFilePath);
     }
@@ -91,7 +91,7 @@ public class LibraryDaoTest {
     @Test
     public void testDataRetrieveByAlbum() {
         final List<Song> songList = libraryDao.retrieveByAlbum("air", "Moon Safari");
-        assertTrue("Song list should not be empty", !songList.isEmpty());
+        assertFalse("Song list should not be empty", songList.isEmpty());
         final String resultFilePath = songList.get(0).getFilePath();
         assertEquals("File paths should be the same", song2.getFilePath(), resultFilePath);
     }

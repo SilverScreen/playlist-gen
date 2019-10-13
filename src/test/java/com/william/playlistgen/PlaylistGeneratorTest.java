@@ -8,12 +8,12 @@ package com.william.playlistgen;
 import com.william.playlistgen.database.LibraryDao;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +32,7 @@ public class PlaylistGeneratorTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
         playlistFolder = testFolder.newFolder("PlaylistFolder");
         objUnderTest = new PlaylistGenerator(playlistFolder.getAbsolutePath());
         objUnderTest.loadLibrary(getMusicLibraryPath());
@@ -56,6 +56,7 @@ public class PlaylistGeneratorTest {
     }
 
     @Test
+    @Ignore
     public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
         objUnderTest.generateMyLovedTracksPlaylist();
         assertPlaylistFileCreated("lastfmloved.m3u");
@@ -73,12 +74,5 @@ public class PlaylistGeneratorTest {
         assertTrue("Playlist folder '" + playlistFolder.getAbsolutePath() + "' should not be empty",
                 playlistFolderContents.length > 0);
         assertEquals("File name should be " + expectedFile, expectedFile, playlistFolderContents[0].getName());
-    }
-
-    private void assertPlaylistFileNotCreated() {
-        final File[] playlistFolderContents = playlistFolder.listFiles();
-        assertNotNull("Playlist folder should not be null", playlistFolderContents);
-        assertTrue("Playlist folder '" + playlistFolder.getAbsolutePath() + "' should be empty",
-                playlistFolderContents.length == 0);
     }
 }

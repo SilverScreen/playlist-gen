@@ -7,6 +7,8 @@ package com.william.playlistgen.database;
 
 import com.william.dev.common.utils.Song;
 import com.william.playlistgen.validation.SongDataValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,8 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.william.playlistgen.database.LibrarySqlStatements.CREATE_TABLE_SQL;
 import static com.william.playlistgen.database.LibrarySqlStatements.DROP_TABLE_SQL;
@@ -31,8 +31,9 @@ import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_
  */
 public class LibraryDao {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LibraryDao.class);
     private static final String DATABASE_NAME = "jdbc:sqlite:test.db";
-    private static final String tableName = "MyMusic";
+    private static final String MUSIC_DATA_TABLE = "MyMusic";
     private static LibraryDao instance = null;
 
     private LibraryDao() {
@@ -49,8 +50,8 @@ public class LibraryDao {
     private static void loadJdbcDriver() {
         try {
             Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (final ClassNotFoundException ex) {
+            LOGGER.error("Error loading JDBC driver", ex);
         }
     }
 
@@ -61,10 +62,10 @@ public class LibraryDao {
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
              final PreparedStatement createTableStatement = connection.prepareStatement(CREATE_TABLE_SQL)) {
             createTableStatement.executeUpdate();
-            System.out.println("Table '" + tableName + "' created successfully!");
+            LOGGER.info("Table [{}] created successfully!", MUSIC_DATA_TABLE);
             return true;
-        } catch (final SQLException e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        } catch (final SQLException ex) {
+            LOGGER.error("Error creating table [{}]", MUSIC_DATA_TABLE, ex);
             return false;
         }
     }
@@ -73,8 +74,8 @@ public class LibraryDao {
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
              final PreparedStatement dropTableStatement = connection.prepareStatement(DROP_TABLE_SQL)) {
             dropTableStatement.executeUpdate();
-        } catch (final SQLException e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        } catch (final SQLException ex) {
+            LOGGER.error("Error dropping table [{}]", MUSIC_DATA_TABLE, ex);
             return false;
         }
         return true;
@@ -86,7 +87,7 @@ public class LibraryDao {
             int numberOfSongsSuccessfullyEntered = 0;
             for (final Song song : songList) {
                 if (!SongDataValidator.isValid(song)) {
-                    System.out.println("Skipping song with invalid data...");
+                    LOGGER.warn("Skipping song with invalid data...");
                     allDataEnteredSuccessfully = false;
                     continue;
                 }
@@ -95,7 +96,7 @@ public class LibraryDao {
                 System.out.print("Entered " + numberOfSongsSuccessfullyEntered + " / " + songList.size() + " songs\r");
             }
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error inserting music data into table [{}]", MUSIC_DATA_TABLE, ex);
             allDataEnteredSuccessfully = false;
         }
         return allDataEnteredSuccessfully;
@@ -110,7 +111,7 @@ public class LibraryDao {
             preparedStatement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error inserting song data for song [{}]", song, ex);
             return false;
         }
         return true;
@@ -129,9 +130,9 @@ public class LibraryDao {
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
              final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_ARTIST_SQL)) {
             statement.setString(1, formatSingleQuotes(artist));
-            songsByArtist = getResultsFromPreparedStatement(statement);
+            songsByArtist = executeRetrieveAllSongsQuery(statement);
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error retrieving data for artist [{}]", artist, ex);
         }
         return songsByArtist;
     }
@@ -142,9 +143,9 @@ public class LibraryDao {
              final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_ALBUM_SQL)) {
             statement.setString(1, formatSingleQuotes(artist));
             statement.setString(2, formatSingleQuotes(album));
-            songsByAlbum = getResultsFromPreparedStatement(statement);
+            songsByAlbum = executeRetrieveAllSongsQuery(statement);
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error retrieving data for artist [{}], album [{}]", artist, album, ex);
         }
         return songsByAlbum;
     }
@@ -155,9 +156,9 @@ public class LibraryDao {
              final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_SONG_SQL)) {
             statement.setString(1, formatSingleQuotes(artist));
             statement.setString(2, formatSingleQuotes(title));
-            songs = getResultsFromPreparedStatement(statement);
+            songs = executeRetrieveAllSongsQuery(statement);
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error retrieving data for artist [{}], title [{}]", artist, title, ex);
         }
         return songs.isEmpty() ? null : songs.get(0);
     }
@@ -165,17 +166,17 @@ public class LibraryDao {
     public List<Song> retrieveAllSongs() {
         List<Song> allSongs = new ArrayList<>();
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
-             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_ALL_SONGS)) {
-            allSongs = getResultsFromPreparedStatement(statement);
+             final PreparedStatement retrieveAllSongsQuery = connection.prepareStatement(RETRIEVE_ALL_SONGS)) {
+            allSongs = executeRetrieveAllSongsQuery(retrieveAllSongsQuery);
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error retrieving all songs from database", ex);
         }
         return allSongs;
     }
 
-    private List<Song> getResultsFromPreparedStatement(final PreparedStatement statement) {
+    private List<Song> executeRetrieveAllSongsQuery(final PreparedStatement retrieveAllSongsQuery) {
         final List<Song> songs = new ArrayList<>();
-        try (final ResultSet resultSet = statement.executeQuery()) {
+        try (final ResultSet resultSet = retrieveAllSongsQuery.executeQuery()) {
             while (resultSet.next()) {
                 Song song = new Song();
                 song.setTitle(resultSet.getString("title"));
@@ -185,7 +186,7 @@ public class LibraryDao {
                 songs.add(song);
             }
         } catch (final SQLException ex) {
-            Logger.getLogger(LibraryDao.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error executing retrieveAllSongsQuery [{}]", retrieveAllSongsQuery, ex);
         }
         return songs;
     }

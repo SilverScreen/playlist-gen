@@ -23,7 +23,7 @@ public class Mp3TagReaderTest {
     private static final String ARTIST = "Air";
     private static final String SONG_TITLE = "All I Need";
     private static final String ALBUM_NAME = "Moon Safari";
-    private static final String MP3_FILE_NAME = "testMp3Folder/03 All I Need.mp3";
+    private static final String MP3_FILE_NAME = "testMp3Folder/Air/03 All I Need.mp3";
     private static final String FILE_PATH_NOT_FOUND = "usghhsuhuu4782";
 
     private Mp3TagReader objUnderTest;
