@@ -7,10 +7,7 @@ package com.william.playlistgen;
 
 import com.william.playlistgen.database.LibraryDao;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -23,22 +20,14 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author William
  */
-public class PlaylistGeneratorTest {
+public class PlaylistGeneratorTestBase {
 
-    private File playlistFolder;
-    private PlaylistGenerator objUnderTest;
+    File playlistFolder;
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    @Before
-    public void setup() {
-        playlistFolder = testFolder.newFolder("PlaylistFolder");
-        objUnderTest = new PlaylistGenerator(playlistFolder.getAbsolutePath());
-        objUnderTest.loadLibrary(getMusicLibraryPath());
-    }
-
-    private String getMusicLibraryPath() {
+    String getMusicLibraryPath() {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL url = classLoader.getResource("testMp3Folder");
         return url != null ? url.getPath() : "";
@@ -49,26 +38,7 @@ public class PlaylistGeneratorTest {
         LibraryDao.getInstance().dropTable();
     }
 
-    @Test
-    public void generateTopTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.generateTopTracksPlaylist();
-        assertPlaylistFileCreated("lastfmtoptracks.m3u");
-    }
-
-    @Test
-    @Ignore
-    public void generateMyLovedTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.generateMyLovedTracksPlaylist();
-        assertPlaylistFileCreated("lastfmloved.m3u");
-    }
-
-    @Test
-    public void generateFriendsLovedTracksPlaylist_successfullyGeneratesFile() {
-        objUnderTest.generateFriendsLovedTracksPlaylist();
-        assertPlaylistFileCreated("friendslastfmloved.m3u");
-    }
-
-    private void assertPlaylistFileCreated(final String expectedFile) {
+    void assertPlaylistFileCreated(final String expectedFile) {
         final File[] playlistFolderContents = playlistFolder.listFiles();
         assertNotNull("Playlist folder should not be null", playlistFolderContents);
         assertTrue("Playlist folder '" + playlistFolder.getAbsolutePath() + "' should not be empty",

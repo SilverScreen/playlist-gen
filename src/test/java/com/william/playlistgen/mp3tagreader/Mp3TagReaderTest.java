@@ -11,8 +11,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -23,6 +25,7 @@ public class Mp3TagReaderTest {
     private static final String ARTIST = "Air";
     private static final String SONG_TITLE = "All I Need";
     private static final String ALBUM_NAME = "Moon Safari";
+    private static final String GENRE = "Electronic";
     private static final String MP3_FILE_NAME = "testMp3Folder/Air/03 All I Need.mp3";
     private static final String FILE_PATH_NOT_FOUND = "usghhsuhuu4782";
 
@@ -30,7 +33,8 @@ public class Mp3TagReaderTest {
 
     @Before
     public void setUp() {
-        objUnderTest = Mp3TagReaderFactory.getTagReader(getMp3File(MP3_FILE_NAME));
+        objUnderTest = Mp3TagReaderFactory.getTagReader(Objects.requireNonNull(getMp3File(MP3_FILE_NAME)));
+        assertNotNull(objUnderTest);
     }
 
     private File getMp3File(final String fileName) {
@@ -45,18 +49,23 @@ public class Mp3TagReaderTest {
     }
 
     @Test
-    public void testGetArtist() {
+    public void getArtist() {
         assertEquals(ARTIST, objUnderTest.getArtist());
     }
 
     @Test
-    public void testGetSongTitle() {
+    public void getSongTitle() {
         assertEquals(SONG_TITLE, objUnderTest.getSongTitle());
     }
 
     @Test
-    public void testGetAlbum() {
+    public void getAlbum() {
         assertEquals(ALBUM_NAME, objUnderTest.getAlbum());
+    }
+
+    @Test
+    public void getGenre() {
+        assertEquals(GENRE, objUnderTest.getGenre());
     }
 
     @Test

@@ -27,4 +27,9 @@ public class Id3v2Mp3TagReader implements Mp3TagReader {
     public String getSongTitle() {
         return id3v2Tag.getTitle();
     }
+
+    @Override
+    public String getGenre() {
+        return id3v2Tag.getGenreDescription();
+    }
 }

@@ -17,14 +17,14 @@ public class PlaylistGenCli {
     private static final String CHARSET = "UTF-8";
     private static final String CONFIG_PROPERTIES_DEFAULT = "config.properties";
     private final String musicLibrary;
-    private final PlaylistGenerator playlistGenerator;
+    private final LastFmPlaylistGenerator playlistGenerator;
     private final Scanner userInput;
 
     private PlaylistGenCli() {
         final PlaylistGenProperties properties = new PlaylistGenProperties(CONFIG_PROPERTIES_DEFAULT);
         musicLibrary = properties.getProperty("musicLibrary");
         final String playlistDirectory = properties.getProperty("playlistDirectory");
-        playlistGenerator = new PlaylistGenerator(playlistDirectory);
+        playlistGenerator = new LastFmPlaylistGenerator(playlistDirectory);
         userInput = new Scanner(System.in, CHARSET);
     }
 

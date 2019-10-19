@@ -25,14 +25,11 @@ import java.util.List;
 public class PlaylistGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistGenerator.class);
-    private static final String LAST_FM_USERNAME = "Zero1986";
     private final static String PLAYLIST_FILE_EXT = ".m3u";
-    private final LastFmPlaylistGen lastFmPlaylistGen;
     private final LibraryDao libraryDao;
     private final String playlistDirectory;
 
     public PlaylistGenerator(final String playlistDirectory) {
-        lastFmPlaylistGen = new LastFmPlaylistGenImpl();
         libraryDao = LibraryDao.getInstance();
         this.playlistDirectory = playlistDirectory;
     }
@@ -46,28 +43,7 @@ public class PlaylistGenerator {
         }
     }
 
-    public void generateTopTracksPlaylist() {
-        LOGGER.info("Generating Top Tracks playlist");
-        final List<Song> topTracks = lastFmPlaylistGen.getTopTracks(LAST_FM_USERNAME);
-        final List<Song> songsFromDatabase = getSongsFromDatabase(topTracks);
-        generatePlaylistFile(songsFromDatabase, "lastfmtoptracks");
-    }
-
-    public void generateMyLovedTracksPlaylist() {
-        LOGGER.info("Generating My Loved Tracks playlist");
-        final List<Song> lastFmLovedTracks = lastFmPlaylistGen.getLovedTracks(LAST_FM_USERNAME);
-        final List<Song> songsFromDatabase = getSongsFromDatabase(lastFmLovedTracks);
-        generatePlaylistFile(songsFromDatabase, "lastfmloved");
-    }
-
-    public void generateFriendsLovedTracksPlaylist() {
-        LOGGER.info("Generating Friends Loved Tracks playlist");
-        final List<Song> friendsLovedTracks = lastFmPlaylistGen.getFriendsLastLovedTracks(LAST_FM_USERNAME);
-        final List<Song> songsFromDatabase = getSongsFromDatabase(friendsLovedTracks);
-        generatePlaylistFile(songsFromDatabase, "friendslastfmloved");
-    }
-
-    private List<Song> getSongsFromDatabase(final List<Song> lastFmFetchedTracks) {
+    List<Song> getSongsFromDatabase(final List<Song> lastFmFetchedTracks) {
         LOGGER.debug("Getting song data from database");
         List<Song> mp3List = libraryDao.retrieveAllSongs();
         mp3List.retainAll(lastFmFetchedTracks);
@@ -76,7 +52,7 @@ public class PlaylistGenerator {
         return mp3List;
     }
 
-    private void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {
+    void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {
         final String playlistFile = playlistFileName + PLAYLIST_FILE_EXT;
         if (!songList.isEmpty()) {
             final String filePath = playlistDirectory + File.separator + playlistFile;

@@ -10,4 +10,6 @@ public interface Mp3TagReader {
     String getAlbum();
 
     String getSongTitle();
+
+    String getGenre();
 }

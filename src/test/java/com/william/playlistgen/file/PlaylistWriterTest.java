@@ -1,7 +1,7 @@
 package com.william.playlistgen.file;
 
 import com.william.dev.common.utils.Song;
-import com.william.playlistgen.PlaylistGeneratorTest;
+import com.william.playlistgen.PlaylistGeneratorTestBase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -84,7 +84,7 @@ public class PlaylistWriterTest {
                 fileContents.append(line);
             }
         } catch (final IOException ex) {
-            Logger.getLogger(PlaylistGeneratorTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PlaylistGeneratorTestBase.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fileContents.toString();
     }
