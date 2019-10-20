@@ -48,18 +48,17 @@ public class LibraryDaoTest {
         testSong = new SongBuilder().setTrackNumber(1).setTitle("'Test'").setArtist("Blah's").setAlbum("\"test\"")
                 .setYear("2017").setGenre("").setFilePath("D:\\Music\\test\\\'test\'\\09. test.mp3").build();
 
-        if (testDataEntered) {
-            return;
+        if (!testDataEntered) {
+            libraryDao.dropTable();
+            assertTrue(libraryDao.createTable());
+            List<Song> songs = new ArrayList<>();
+            songs.add(fadeIntoYou);
+            songs.add(sexyBoy);
+            songs.add(newNoise);
+            songs.add(testSong);
+            assertTrue(libraryDao.insertSongs(songs));
+            testDataEntered = true;
         }
-        libraryDao.dropTable();
-        assertTrue(libraryDao.createTable());
-        List<Song> songs = new ArrayList<>();
-        songs.add(fadeIntoYou);
-        songs.add(sexyBoy);
-        songs.add(newNoise);
-        songs.add(testSong);
-        assertTrue(libraryDao.insert(songs));
-        testDataEntered = true;
     }
 
     @Test
@@ -67,7 +66,7 @@ public class LibraryDaoTest {
         final Song invalidSong = new Song(0, null, null, null, null, null, null);
         final List<Song> invalidSongs = new ArrayList<>();
         invalidSongs.add(invalidSong);
-        assertFalse(libraryDao.insert(invalidSongs));
+        assertFalse(libraryDao.insertSongs(invalidSongs));
     }
 
     @Test

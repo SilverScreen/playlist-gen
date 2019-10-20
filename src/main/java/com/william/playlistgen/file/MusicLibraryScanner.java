@@ -61,17 +61,17 @@ public class MusicLibraryScanner implements FilenameFilter {
         try {
             final DirectoryStream<Path> filesInCurrentDirectory = Files.newDirectoryStream(directory);
             for (final Path currentFile : filesInCurrentDirectory) {
-                if (Files.isDirectory(currentFile)) {
-                    processDirectory(currentFile);
-                } else if (currentFile.toString().endsWith(CODEC_MP3)) {
+                if (currentFile.toString().endsWith(CODEC_MP3)) {
                     processMp3File(songs, currentFile.toFile());
+                } else if (Files.isDirectory(currentFile)) {
+                    processDirectory(currentFile);
                 }
             }
         } catch (final IOException ex) {
             LOGGER.error("Error processing directory [{}]", directory, ex);
         }
         LOGGER.info("Inserting [{}] songs into music database", songs.size());
-        libraryDao.insert(songs);
+        libraryDao.insertSongs(songs);
         LOGGER.info("Processed directory [{}] in [{}] ms", directory, System.currentTimeMillis() - start);
     }
 

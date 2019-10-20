@@ -82,41 +82,31 @@ public class LibraryDao {
         return true;
     }
 
-    public boolean insert(final List<Song> songList) {
-        boolean allDataEnteredSuccessfully = true;
-        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME)) {
-            int numberOfSongsSuccessfullyEntered = 0;
+    public boolean insertSongs(final List<Song> songList) {
+        boolean allDataEnteredSuccessfully = false;
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SONG_SQL)) {
+            int songCounter = 0;
             for (final Song song : songList) {
                 if (!SongDataValidator.isValid(song)) {
                     LOGGER.warn("Skipping song with invalid data...");
-                    allDataEnteredSuccessfully = false;
                     continue;
                 }
-                allDataEnteredSuccessfully = insertSong(connection, song);
-                numberOfSongsSuccessfullyEntered++;
-                System.out.print("Entered " + numberOfSongsSuccessfullyEntered + " / " + songList.size() + " songs\r");
+                preparedStatement.setString(1, formatSingleQuotes(song.getTitle()));
+                preparedStatement.setString(2, formatSingleQuotes(song.getArtist()));
+                preparedStatement.setString(3, formatSingleQuotes(song.getAlbum()));
+                preparedStatement.setString(4, formatSingleQuotes(song.getGenre()));
+                preparedStatement.setString(5, formatSingleQuotes(song.getFilePath()));
+                preparedStatement.addBatch();
+                songCounter++;
             }
+            preparedStatement.executeBatch();
+            LOGGER.info("Entered {} / {} songs", songCounter, songList.size());
+            allDataEnteredSuccessfully = (songCounter == songList.size());
         } catch (final SQLException ex) {
             LOGGER.error("Error inserting music data into table [{}]", MUSIC_DATA_TABLE, ex);
-            allDataEnteredSuccessfully = false;
         }
         return allDataEnteredSuccessfully;
-    }
-
-    private boolean insertSong(final Connection connection, final Song song) {
-        try (final PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SONG_SQL)) {
-            preparedStatement.setString(1, formatSingleQuotes(song.getTitle()));
-            preparedStatement.setString(2, formatSingleQuotes(song.getArtist()));
-            preparedStatement.setString(3, formatSingleQuotes(song.getAlbum()));
-            preparedStatement.setString(4, formatSingleQuotes(song.getGenre()));
-            preparedStatement.setString(5, formatSingleQuotes(song.getFilePath()));
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException ex) {
-            LOGGER.error("Error inserting song data for song [{}]", song, ex);
-            return false;
-        }
-        return true;
     }
 
     private String formatSingleQuotes(final String stringToFormat) {
