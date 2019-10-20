@@ -7,7 +7,6 @@ package com.william.playlistgen.database;
 
 import com.william.dev.common.utils.Song;
 import com.william.playlistgen.testutils.SongBuilder;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +23,8 @@ import static org.junit.Assert.assertTrue;
  * @author William
  */
 public class LibraryDaoTest {
+
+    private static boolean testDataEntered = false;
 
     private static final String FILE_SEPARATOR = File.separator;
     private static final String TEST_FOLDER = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources"
@@ -47,6 +48,10 @@ public class LibraryDaoTest {
         testSong = new SongBuilder().setTrackNumber(1).setTitle("'Test'").setArtist("Blah's").setAlbum("\"test\"")
                 .setYear("2017").setGenre("").setFilePath("D:\\Music\\test\\\'test\'\\09. test.mp3").build();
 
+        if (testDataEntered) {
+            return;
+        }
+        libraryDao.dropTable();
         assertTrue(libraryDao.createTable());
         List<Song> songs = new ArrayList<>();
         songs.add(fadeIntoYou);
@@ -54,12 +59,7 @@ public class LibraryDaoTest {
         songs.add(newNoise);
         songs.add(testSong);
         assertTrue(libraryDao.insert(songs));
-    }
-
-    @After
-    public void teardown() {
-        libraryDao.dropTable();
-        libraryDao = null;
+        testDataEntered = true;
     }
 
     @Test
@@ -129,9 +129,15 @@ public class LibraryDaoTest {
     }
 
     @Test
-    public void retrieveAllSongsByGenre() {
+    public void retrievesAllSongsByGenre() {
         final List<Song> songs = libraryDao.retrieveByGenre("Punk");
         assertFalse("Song list should not be empty", songs.isEmpty());
         assertEquals("File paths should be the same", newNoise.getFilePath(), songs.get(0).getFilePath());
+    }
+
+    @Test
+    public void retrievesNoSongsForNonInvalidGenre() {
+        final List<Song> songs = libraryDao.retrieveByGenre("Irish Polka");
+        assertTrue("Song list should be empty", songs.isEmpty());
     }
 }

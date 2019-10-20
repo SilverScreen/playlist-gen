@@ -24,7 +24,7 @@ public class PlaylistGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistGenerator.class);
     private final static String PLAYLIST_FILE_EXT = ".m3u";
-    private final LibraryDao libraryDao;
+    final LibraryDao libraryDao;
     private final String playlistDirectory;
 
     public PlaylistGenerator(final String playlistDirectory) {
@@ -41,13 +41,13 @@ public class PlaylistGenerator {
         }
     }
 
-    List<Song> getSongsFromDatabase(final List<Song> lastFmFetchedTracks) {
+    List<Song> getSongsFromDatabase(final List<Song> songsToFetch) {
         LOGGER.debug("Getting song data from database");
-        final List<Song> mp3List = libraryDao.retrieveAllSongs();
-        mp3List.retainAll(lastFmFetchedTracks);
-        Collections.shuffle(mp3List);
-        LOGGER.debug("Found [{}] songs in database", mp3List.size());
-        return mp3List;
+        final List<Song> songsReturned = libraryDao.retrieveAllSongs();
+        songsReturned.retainAll(songsToFetch);
+        Collections.shuffle(songsReturned);
+        LOGGER.debug("Found [{}] songs in database", songsReturned.size());
+        return songsReturned;
     }
 
     void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {

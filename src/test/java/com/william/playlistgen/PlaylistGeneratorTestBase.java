@@ -5,8 +5,6 @@
  */
 package com.william.playlistgen;
 
-import com.william.playlistgen.database.LibraryDao;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -33,16 +31,17 @@ public class PlaylistGeneratorTestBase {
         return url != null ? url.getPath() : "";
     }
 
-    @After
-    public void tearDown() {
-        LibraryDao.getInstance().dropTable();
-    }
-
     void assertPlaylistFileCreated(final String expectedFile) {
         final File[] playlistFolderContents = playlistFolder.listFiles();
         assertNotNull("Playlist folder should not be null", playlistFolderContents);
         assertTrue("Playlist folder '" + playlistFolder.getAbsolutePath() + "' should not be empty",
                 playlistFolderContents.length > 0);
         assertEquals("File name should be " + expectedFile, expectedFile, playlistFolderContents[0].getName());
+    }
+
+    void assertNoPlaylistFileCreated() {
+        final File[] playlistFolderContents = playlistFolder.listFiles();
+        assertNotNull("Playlist folder should not be null", playlistFolderContents);
+        assertEquals("Playlist folder should be empty", 0, playlistFolderContents.length);
     }
 }
