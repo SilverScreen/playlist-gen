@@ -4,12 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.william</groupId>
     <artifactId>PlaylistGen</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compilier.plugin.version>3.8.1</maven.compilier.plugin.version>
+        <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
+        <maven.shade.plugin.version>3.2.1</maven.shade.plugin.version>
         <last.fm.helper.version>0.1.2</last.fm.helper.version>
         <common.utils.version>0.0.3</common.utils.version>
     </properties>
@@ -53,17 +56,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.william.dev</groupId>
-            <artifactId>CommonUtils</artifactId>
-            <version>${common.utils.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -76,7 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.6</version>
+                <version>${maven.shade.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -97,6 +96,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compilier.plugin.version}</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>

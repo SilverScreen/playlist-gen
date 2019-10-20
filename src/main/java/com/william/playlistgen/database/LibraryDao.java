@@ -24,6 +24,7 @@ import static com.william.playlistgen.database.LibrarySqlStatements.INSERT_SONG_
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_ALL_SONGS;
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_ALBUM_SQL;
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_ARTIST_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_GENRE_SQL;
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_SONG_SQL;
 
 /**
@@ -107,7 +108,8 @@ public class LibraryDao {
             preparedStatement.setString(1, formatSingleQuotes(song.getTitle()));
             preparedStatement.setString(2, formatSingleQuotes(song.getArtist()));
             preparedStatement.setString(3, formatSingleQuotes(song.getAlbum()));
-            preparedStatement.setString(4, formatSingleQuotes(song.getFilePath()));
+            preparedStatement.setString(4, formatSingleQuotes(song.getGenre()));
+            preparedStatement.setString(5, formatSingleQuotes(song.getFilePath()));
             preparedStatement.executeUpdate();
 
         } catch (SQLException ex) {
@@ -163,6 +165,18 @@ public class LibraryDao {
         return songs.isEmpty() ? null : songs.get(0);
     }
 
+    public List<Song> retrieveByGenre(final String genre) {
+        List<Song> songs = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_GENRE_SQL)) {
+            statement.setString(1, formatSingleQuotes(genre));
+            songs = executeRetrieveAllSongsQuery(statement);
+        } catch (final SQLException ex) {
+            LOGGER.error("Error retrieving data for genre [{}]", genre, ex);
+        }
+        return songs;
+    }
+
     public List<Song> retrieveAllSongs() {
         List<Song> allSongs = new ArrayList<>();
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
@@ -182,6 +196,7 @@ public class LibraryDao {
                 song.setTitle(resultSet.getString("title"));
                 song.setArtist(resultSet.getString("artist"));
                 song.setAlbum(resultSet.getString("album"));
+                song.setGenre(resultSet.getString("genre"));
                 song.setFilePath(resultSet.getString("path"));
                 songs.add(song);
             }

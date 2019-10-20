@@ -10,13 +10,16 @@ public class LibrarySqlStatements {
             + "title    TEXT    NOT NULL,"
             + "artist   TEXT    NOT NULL,"
             + "album    TEXT    NOT NULL,"
+            + "genre    TEXT,"
             + "path     TEXT    NOT NULL)";
-    static final String INSERT_SONG_SQL = "INSERT INTO " + TABLE_NAME + "(title, artist, album, path) VALUES (?,?,?,?)";
+    static final String INSERT_SONG_SQL = "INSERT INTO " + TABLE_NAME
+            + "(title, artist, album, genre, path) VALUES (?,?,?,?,?)";
     static final String RETRIEVE_BY_ARTIST_SQL = "SELECT * FROM " + TABLE_NAME + " WHERE LOWER(artist) = LOWER(?)";
     static final String RETRIEVE_BY_ALBUM_SQL = "SELECT * FROM " + TABLE_NAME
             + " WHERE LOWER(artist) = LOWER(?) AND LOWER(album) = LOWER(?)";
     static final String RETRIEVE_BY_SONG_SQL = "SELECT * FROM " + TABLE_NAME
             + " WHERE LOWER(artist) = LOWER(?) AND LOWER(title) = LOWER(?)";
+    static final String RETRIEVE_BY_GENRE_SQL = "SELECT * FROM " + TABLE_NAME + " WHERE LOWER(genre) = LOWER(?)";
     static final String RETRIEVE_ALL_SONGS = "SELECT * FROM " + TABLE_NAME;
 
 }

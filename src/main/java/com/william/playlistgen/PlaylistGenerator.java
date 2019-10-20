@@ -6,8 +6,6 @@
 package com.william.playlistgen;
 
 import com.william.dev.common.utils.Song;
-import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGen;
-import com.william.dev.lastfmhelper.lastfmplaylistgen.LastFmPlaylistGenImpl;
 import com.william.playlistgen.database.LibraryDao;
 import com.william.playlistgen.exception.DirectoryNotFoundException;
 import com.william.playlistgen.file.MusicLibraryScanner;
@@ -45,7 +43,7 @@ public class PlaylistGenerator {
 
     List<Song> getSongsFromDatabase(final List<Song> lastFmFetchedTracks) {
         LOGGER.debug("Getting song data from database");
-        List<Song> mp3List = libraryDao.retrieveAllSongs();
+        final List<Song> mp3List = libraryDao.retrieveAllSongs();
         mp3List.retainAll(lastFmFetchedTracks);
         Collections.shuffle(mp3List);
         LOGGER.debug("Found [{}] songs in database", mp3List.size());
