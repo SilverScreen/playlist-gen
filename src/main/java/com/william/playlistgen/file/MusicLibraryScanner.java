@@ -84,8 +84,8 @@ public class MusicLibraryScanner implements FilenameFilter {
     }
 
     private Song getSongDetailsFromFile(final File mp3File) {
-        final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.getTagReader(mp3File);
         try {
+            final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.getTagReader(mp3File);
             final Song song = new Song();
             song.setTitle(mp3TagReader.getSongTitle());
             song.setArtist(mp3TagReader.getArtist());

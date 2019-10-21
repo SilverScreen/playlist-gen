@@ -8,17 +8,18 @@ package com.william.playlistgen.mp3tagreader;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author William
  */
 public class Mp3TagReaderFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Mp3TagReaderFactory.class.getName());
     private static final String WHITESPACE = "%20";
 
     public static Mp3TagReader getTagReader(final File file) {
@@ -31,8 +32,8 @@ public class Mp3TagReaderFactory {
             } else if (mp3File.hasId3v2Tag()) {
                 mp3TagReader = new Id3v2Mp3TagReader(mp3File.getId3v2Tag());
             }
-        } catch (IOException | UnsupportedTagException | InvalidDataException ex) {
-            Logger.getLogger(Mp3TagReaderFactory.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (final IOException | UnsupportedTagException | InvalidDataException | IllegalArgumentException ex) {
+            LOGGER.error("Error resolving mp3 tag reader for file [{}]", file.getName(), ex);
         }
         return mp3TagReader;
     }

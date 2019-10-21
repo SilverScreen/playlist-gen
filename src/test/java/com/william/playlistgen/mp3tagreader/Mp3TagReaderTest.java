@@ -7,6 +7,7 @@ package com.william.playlistgen.mp3tagreader;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,6 +29,7 @@ public class Mp3TagReaderTest {
     private static final String GENRE = "Electronic";
     private static final String MP3_FILE_NAME = "testMp3Folder/Air/03 All I Need.mp3";
     private static final String FILE_PATH_NOT_FOUND = "usghhsuhuu4782";
+    private static final String CORRUPT_FILE_PATH = "corruptMp3Folder/13 Corrupt File.mp3";
 
     private Mp3TagReader objUnderTest;
 
@@ -71,6 +73,12 @@ public class Mp3TagReaderTest {
     @Test
     public void testFileNotFound() {
         objUnderTest = Mp3TagReaderFactory.getTagReader(new File(FILE_PATH_NOT_FOUND));
+        assertNull(objUnderTest);
+    }
+
+    @Test
+    public void testCorruptFile() {
+        objUnderTest = Mp3TagReaderFactory.getTagReader(Objects.requireNonNull(getMp3File(CORRUPT_FILE_PATH)));
         assertNull(objUnderTest);
     }
 }

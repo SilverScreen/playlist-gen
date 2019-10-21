@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class MusicLibraryScannerTest {
 
+    private static final int NUM_FILES_IN_FOLDER = 7;
     private LibraryDao libraryDao = LibraryDao.getInstance();
     private MusicLibraryScanner objUnderTest;
 
@@ -36,7 +37,8 @@ public class MusicLibraryScannerTest {
         objUnderTest = new MusicLibraryScanner(getMusicLibraryPath("testMp3Folder"));
         objUnderTest.startScan();
         final List<Song> allSongsEntered = libraryDao.retrieveAllSongs();
-        assertEquals("The number of songs entered should be 7", 7, allSongsEntered.size());
+        assertEquals("The number of songs entered should be " + NUM_FILES_IN_FOLDER,
+                NUM_FILES_IN_FOLDER, allSongsEntered.size());
     }
 
     @Test
@@ -50,5 +52,13 @@ public class MusicLibraryScannerTest {
     @Test(expected = DirectoryNotFoundException.class)
     public void processMusicFolderWithNonExistentDirectory() throws Exception {
         objUnderTest = new MusicLibraryScanner("some_directory");
+    }
+
+    @Test
+    public void processMusicFolderWithCorruptFile() throws Exception {
+        objUnderTest = new MusicLibraryScanner(getMusicLibraryPath("corruptMp3Folder"));
+        objUnderTest.startScan();
+        final List<Song> allSongsEntered = libraryDao.retrieveAllSongs();
+        assertEquals("The number of songs entered should be 1", 1, allSongsEntered.size());
     }
 }
