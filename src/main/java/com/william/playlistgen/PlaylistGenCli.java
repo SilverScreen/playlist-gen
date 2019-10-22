@@ -17,7 +17,6 @@ public class PlaylistGenCli {
     private static final String CHARSET = "UTF-8";
     private static final String CONFIG_PROPERTIES_DEFAULT = "config.properties";
     private final String musicLibrary;
-    private final LastFmPlaylistGenerator lastFmPlaylistGenerator;
     private final LocalPlaylistGenerator localPlaylistGenerator;
     private final Scanner userInput;
 
@@ -25,7 +24,6 @@ public class PlaylistGenCli {
         final PlaylistGenProperties properties = new PlaylistGenProperties(CONFIG_PROPERTIES_DEFAULT);
         musicLibrary = properties.getProperty("musicLibrary");
         final String playlistDirectory = properties.getProperty("playlistDirectory");
-        lastFmPlaylistGenerator = new LastFmPlaylistGenerator(playlistDirectory);
         localPlaylistGenerator = new LocalPlaylistGenerator(playlistDirectory);
         userInput = new Scanner(System.in, CHARSET);
     }
@@ -45,10 +43,7 @@ public class PlaylistGenCli {
         System.out.println();
         System.out.println("\tSelect an option...\n");
         System.out.println("1 - Load local library");
-        System.out.println("2 - Generate Last.fm top tracks playlist");
-        System.out.println("3 - Generate Last.fm loved tracks playlist");
-        System.out.println("4 - Generate Last.fm friends loved tracks playlist");
-        System.out.println("5 - Generate a genre playlist");
+        System.out.println("2 - Generate a genre playlist");
         System.out.println("0 - Exit");
         System.out.println();
         System.out.println("===================================");
@@ -69,15 +64,6 @@ public class PlaylistGenCli {
                 loadMusicLibrary();
                 break;
             case 2:
-                lastFmPlaylistGenerator.generateTopTracksPlaylist();
-                break;
-            case 3:
-                lastFmPlaylistGenerator.generateMyLovedTracksPlaylist();
-                break;
-            case 4:
-                lastFmPlaylistGenerator.generateFriendsLovedTracksPlaylist();
-                break;
-            case 5:
                 System.out.print("\nEnter a genre: ");
                 final String userChoice = userInput.next();
                 localPlaylistGenerator.generateGenrePlaylist(userChoice);
@@ -92,7 +78,7 @@ public class PlaylistGenCli {
         System.out.print("This will erase any library data you currently have. Continue (y/n)? -> ");
         final String userChoice = userInput.next();
         if (userChoiceIsYes(userChoice)) {
-            lastFmPlaylistGenerator.loadLibrary(musicLibrary);
+            localPlaylistGenerator.loadLibrary(musicLibrary);
         }
     }
 

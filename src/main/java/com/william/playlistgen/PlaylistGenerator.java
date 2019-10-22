@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,15 +38,6 @@ public class PlaylistGenerator {
         } catch (final DirectoryNotFoundException ex) {
             LOGGER.error("Error loading music library [{}]", musicLibraryPath, ex);
         }
-    }
-
-    List<Song> getSongsFromDatabase(final List<Song> songsToFetch) {
-        LOGGER.debug("Getting song data from database");
-        final List<Song> songsReturned = libraryDao.retrieveAllSongs();
-        songsReturned.retainAll(songsToFetch);
-        Collections.shuffle(songsReturned);
-        LOGGER.debug("Found [{}] songs in database", songsReturned.size());
-        return songsReturned;
     }
 
     void generatePlaylistFile(final List<Song> songList, final String playlistFileName) {

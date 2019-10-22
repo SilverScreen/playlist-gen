@@ -20,8 +20,8 @@ public class LocalPlaylistGeneratorTest extends PlaylistGeneratorTestBase {
 
     @Test
     public void generatesGenrePlaylistSuccessfully() {
-        objUnderTest.generateGenrePlaylist("Punk");
-        assertPlaylistFileCreated("myPunkPlaylist.m3u");
+        objUnderTest.generateGenrePlaylist("Electronic");
+        assertPlaylistFileCreated("myElectronicPlaylist.m3u");
     }
 
     @Test
