@@ -86,13 +86,17 @@ public class MusicLibraryScanner implements FilenameFilter {
     private Song getSongDetailsFromFile(final File mp3File) {
         try {
             final Mp3TagReader mp3TagReader = Mp3TagReaderFactory.getTagReader(mp3File);
-            final Song song = new Song();
-            song.setTitle(mp3TagReader.getSongTitle());
-            song.setArtist(mp3TagReader.getArtist());
-            song.setAlbum(mp3TagReader.getAlbum());
-            song.setGenre(mp3TagReader.getGenre());
-            song.setFilePath(mp3File.toURI().toURL().toString());
-            return song;
+            if (mp3TagReader == null) {
+                LOGGER.warn("Cannot read tags from mp3 file [{}]", mp3File);
+            } else {
+                final Song song = new Song();
+                song.setTitle(mp3TagReader.getSongTitle());
+                song.setArtist(mp3TagReader.getArtist());
+                song.setAlbum(mp3TagReader.getAlbum());
+                song.setGenre(mp3TagReader.getGenre());
+                song.setFilePath(mp3File.toURI().toURL().toString());
+                return song;
+            }
         } catch (final Exception ex) {
             LOGGER.error("Error reading song details from file [{}]", mp3File.getName(), ex);
         }

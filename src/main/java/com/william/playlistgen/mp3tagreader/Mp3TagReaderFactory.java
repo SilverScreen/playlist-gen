@@ -27,10 +27,10 @@ public class Mp3TagReaderFactory {
         try {
             final String filePath = file.getAbsolutePath().replaceAll(WHITESPACE, " ");
             final Mp3File mp3File = new Mp3File(filePath);
-            if (mp3File.hasId3v1Tag()) {
-                mp3TagReader = new Id3v1Mp3TagReader(mp3File.getId3v1Tag());
-            } else if (mp3File.hasId3v2Tag()) {
+            if (mp3File.hasId3v2Tag()) {
                 mp3TagReader = new Id3v2Mp3TagReader(mp3File.getId3v2Tag());
+            } else if (mp3File.hasId3v1Tag()) {
+                mp3TagReader = new Id3v1Mp3TagReader(mp3File.getId3v1Tag());
             }
         } catch (final IOException | UnsupportedTagException | InvalidDataException | IllegalArgumentException ex) {
             LOGGER.error("Error resolving mp3 tag reader for file [{}]", file.getName(), ex);
