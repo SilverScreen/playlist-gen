@@ -26,6 +26,7 @@ import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_ARTIST_SQL;
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_GENRE_SQL;
 import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_SONG_SQL;
+import static com.william.playlistgen.database.LibrarySqlStatements.RETRIEVE_BY_YEAR_SQL;
 
 /**
  * @author William
@@ -95,8 +96,9 @@ public class LibraryDao {
                 preparedStatement.setString(1, formatSingleQuotes(song.getTitle()));
                 preparedStatement.setString(2, formatSingleQuotes(song.getArtist()));
                 preparedStatement.setString(3, formatSingleQuotes(song.getAlbum()));
-                preparedStatement.setString(4, formatSingleQuotes(song.getGenre()));
-                preparedStatement.setString(5, formatSingleQuotes(song.getFilePath()));
+                preparedStatement.setString(4, song.getYear());
+                preparedStatement.setString(5, formatSingleQuotes(song.getGenre()));
+                preparedStatement.setString(6, formatSingleQuotes(song.getFilePath()));
                 preparedStatement.addBatch();
                 songCounter++;
             }
@@ -164,6 +166,18 @@ public class LibraryDao {
             songs = executeRetrieveAllSongsQuery(statement);
         } catch (final SQLException ex) {
             LOGGER.error("Error retrieving data for genre [{}]", genre, ex);
+        }
+        return songs;
+    }
+
+    public List<Song> retrieveByYear(final String year) {
+        List<Song> songs = new ArrayList<>();
+        try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
+             final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_YEAR_SQL)) {
+            statement.setString(1, year);
+            songs = executeRetrieveAllSongsQuery(statement);
+        } catch (final SQLException ex) {
+            LOGGER.error("Error retrieving data for year [{}]", year, ex);
         }
         return songs;
     }

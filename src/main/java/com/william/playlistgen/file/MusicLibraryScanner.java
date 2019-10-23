@@ -93,6 +93,7 @@ public class MusicLibraryScanner implements FilenameFilter {
                 song.setTitle(mp3TagReader.getSongTitle());
                 song.setArtist(mp3TagReader.getArtist());
                 song.setAlbum(mp3TagReader.getAlbum());
+                song.setYear(mp3TagReader.getYear());
                 song.setGenre(mp3TagReader.getGenre());
                 song.setFilePath(mp3File.toURI().toURL().toString());
                 return song;

@@ -11,5 +11,7 @@ public interface Mp3TagReader {
 
     String getSongTitle();
 
+    String getYear();
+
     String getGenre();
 }

@@ -12,8 +12,7 @@ public class SongDataValidator {
         final String artist = song.getArtist();
         final String album = song.getAlbum();
         final String title = song.getTitle();
-        final String year = song.getYear();
         final String filePath = song.getFilePath();
-        return artist != null && album !=null && title != null && year != null && filePath != null;
+        return artist != null && album !=null && title != null && filePath != null;
     }
 }

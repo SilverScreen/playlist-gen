@@ -27,6 +27,7 @@ public class Mp3TagReaderTest {
     private static final String SONG_TITLE = "All I Need";
     private static final String ALBUM_NAME = "Moon Safari";
     private static final String GENRE = "Electronic";
+    private static final String YEAR = "1998";
     private static final String MP3_FILE_NAME = "testMp3Folder/Air/03 All I Need.mp3";
     private static final String FILE_PATH_NOT_FOUND = "usghhsuhuu4782";
     private static final String CORRUPT_FILE_PATH = "corruptMp3Folder/13 Corrupt File.mp3";
@@ -63,6 +64,11 @@ public class Mp3TagReaderTest {
     @Test
     public void getAlbum() {
         assertEquals(ALBUM_NAME, objUnderTest.getAlbum());
+    }
+
+    @Test
+    public void getYear() {
+        assertEquals(YEAR, objUnderTest.getYear());
     }
 
     @Test

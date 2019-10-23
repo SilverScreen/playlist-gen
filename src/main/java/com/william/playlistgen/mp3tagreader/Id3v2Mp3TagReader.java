@@ -29,6 +29,11 @@ public class Id3v2Mp3TagReader implements Mp3TagReader {
     }
 
     @Override
+    public String getYear() {
+        return id3v2Tag.getYear();
+    }
+
+    @Override
     public String getGenre() {
         return id3v2Tag.getGenreDescription();
     }

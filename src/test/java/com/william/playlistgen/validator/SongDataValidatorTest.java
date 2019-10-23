@@ -33,7 +33,9 @@ public class SongDataValidatorTest {
         return Arrays.asList(new Object[][]{
                 {new Song(1, "artist", "album", "title", "year", "filepath", null), true},
                 {new Song(1, "artist", "album", "title", "year", "genre", "filepath", null), true},
+                {new Song(1, "artist", "album", "title", "year", null, "filepath", null), true},
                 {new Song(1, "", "album", "title", "year", "filepath", null), true},
+                {new Song(1, "artist", "album", "title", null, "filepath", null), true},
                 {new Song(1, "", "", "", "", "", null), true},
                 {new Song(1, null, "album", "title", "year", "filepath", null), false},
                 {new Song(1, null, null, null, null, null, null), false}

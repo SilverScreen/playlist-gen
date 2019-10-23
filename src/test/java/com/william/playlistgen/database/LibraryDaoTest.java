@@ -50,13 +50,13 @@ public class LibraryDaoTest {
 
         if (!testDataEntered) {
             libraryDao.dropTable();
-            assertTrue(libraryDao.createTable());
+            assertTrue("Table should be created", libraryDao.createTable());
             List<Song> songs = new ArrayList<>();
             songs.add(fadeIntoYou);
             songs.add(sexyBoy);
             songs.add(newNoise);
             songs.add(testSong);
-            assertTrue(libraryDao.insertSongs(songs));
+            assertTrue("All songs should be inserted", libraryDao.insertSongs(songs));
             testDataEntered = true;
         }
     }
@@ -124,7 +124,7 @@ public class LibraryDaoTest {
     @Test
     public void retrieveAllSongs_getsSongsSuccessfully() {
         final List<Song> songList = libraryDao.retrieveAllSongs();
-        assertEquals("Number of songs retrieve should be 4", 4, songList.size());
+        assertEquals("Number of songs retrieved should be 4", 4, songList.size());
     }
 
     @Test
@@ -138,5 +138,11 @@ public class LibraryDaoTest {
     public void retrievesNoSongsForNonInvalidGenre() {
         final List<Song> songs = libraryDao.retrieveByGenre("Irish Polka");
         assertTrue("Song list should be empty", songs.isEmpty());
+    }
+
+    @Test
+    public void retrievedAllSongsByYear() {
+        final List<Song> songs = libraryDao.retrieveByYear("1998");
+        assertEquals("Number of songs should be 2", 2, songs.size());
     }
 }
