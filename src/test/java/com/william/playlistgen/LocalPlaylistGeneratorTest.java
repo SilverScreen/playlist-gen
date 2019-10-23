@@ -35,4 +35,22 @@ public class LocalPlaylistGeneratorTest extends PlaylistGeneratorTestBase {
         objUnderTest.generateGenrePlaylist(null);
         assertNoPlaylistFileCreated();
     }
+
+    @Test
+    public void generatesYearPlaylistSuccessfully() {
+        objUnderTest.generateYearPlaylist("1998");
+        assertPlaylistFileCreated("my1998Playlist.m3u");
+    }
+
+    @Test
+    public void doesNotGeneratePlaylistForInvalidYear() {
+        objUnderTest.generateYearPlaylist("3004");
+        assertNoPlaylistFileCreated();
+    }
+
+    @Test
+    public void doesNotGeneratePlaylistForNullYear() {
+        objUnderTest.generateYearPlaylist(null);
+        assertNoPlaylistFileCreated();
+    }
 }

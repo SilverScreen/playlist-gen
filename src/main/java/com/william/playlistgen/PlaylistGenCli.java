@@ -44,6 +44,7 @@ public class PlaylistGenCli {
         System.out.println("\tSelect an option...\n");
         System.out.println("1 - Load local library");
         System.out.println("2 - Generate a genre playlist");
+        System.out.println("3 - Generate a year playlist");
         System.out.println("0 - Exit");
         System.out.println();
         System.out.println("===================================");
@@ -65,8 +66,11 @@ public class PlaylistGenCli {
                 break;
             case 2:
                 System.out.print("\nEnter a genre: ");
-                final String userChoice = userInput.next();
-                localPlaylistGenerator.generateGenrePlaylist(userChoice);
+                localPlaylistGenerator.generateGenrePlaylist(userInput.next());
+                break;
+            case 3:
+                System.out.println("\nEnter a year: ");
+                localPlaylistGenerator.generateYearPlaylist(userInput.next());
             case 0:
                 break;
             default:

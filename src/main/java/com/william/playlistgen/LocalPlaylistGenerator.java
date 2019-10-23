@@ -15,6 +15,7 @@ public class LocalPlaylistGenerator extends PlaylistGenerator {
     private static final int NUMBER_OF_SHUFFLES = 10;
     private static final int RANDOMNESS_FACTOR = 100;
     private static final int PLAYLIST_LIMIT = 25;
+    private static final String PLAYLIST_NAME_TEMPLATE = "my%sPlaylist";
 
     public LocalPlaylistGenerator(String playlistDirectory) {
         super(playlistDirectory);
@@ -27,6 +28,14 @@ public class LocalPlaylistGenerator extends PlaylistGenerator {
             Collections.shuffle(songsByGenre, new Random(RANDOMNESS_FACTOR));
         }
         songsByGenre = songsByGenre.stream().limit(PLAYLIST_LIMIT).collect(Collectors.toList());
-        generatePlaylistFile(songsByGenre, "my" + genre + "Playlist");
+        generatePlaylistFile(songsByGenre, String.format(PLAYLIST_NAME_TEMPLATE, genre));
+    }
+
+    public void generateYearPlaylist(final String year) {
+        LOGGER.info("Generating [{}] playlist", year);
+        List<Song> songsByYear = libraryDao.retrieveByYear(year);
+        Collections.shuffle(songsByYear, new Random(RANDOMNESS_FACTOR));
+        songsByYear = songsByYear.stream().limit(PLAYLIST_LIMIT).collect(Collectors.toList());
+        generatePlaylistFile(songsByYear, String.format(PLAYLIST_NAME_TEMPLATE, year));
     }
 }
