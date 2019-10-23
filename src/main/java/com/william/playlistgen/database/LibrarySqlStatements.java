@@ -19,7 +19,7 @@ public class LibrarySqlStatements {
             + " WHERE LOWER(artist) = LOWER(?) AND LOWER(album) = LOWER(?)";
     static final String RETRIEVE_BY_SONG_SQL = "SELECT * FROM " + TABLE_NAME
             + " WHERE LOWER(artist) = LOWER(?) AND LOWER(title) = LOWER(?)";
-    static final String RETRIEVE_BY_GENRE_SQL = "SELECT * FROM " + TABLE_NAME + " WHERE LOWER(genre) = LOWER(?)";
+    static final String RETRIEVE_BY_GENRE_SQL = "SELECT * FROM " + TABLE_NAME + " WHERE LOWER(genre) LIKE LOWER(?)";
     static final String RETRIEVE_ALL_SONGS = "SELECT * FROM " + TABLE_NAME;
 
 }

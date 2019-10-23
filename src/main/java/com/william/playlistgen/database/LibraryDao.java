@@ -159,7 +159,8 @@ public class LibraryDao {
         List<Song> songs = new ArrayList<>();
         try (final Connection connection = DriverManager.getConnection(DATABASE_NAME);
              final PreparedStatement statement = connection.prepareStatement(RETRIEVE_BY_GENRE_SQL)) {
-            statement.setString(1, formatSingleQuotes(genre));
+            final String genreWithWildcardMatch = "%" + formatSingleQuotes(genre) + "%";
+            statement.setString(1, genreWithWildcardMatch);
             songs = executeRetrieveAllSongsQuery(statement);
         } catch (final SQLException ex) {
             LOGGER.error("Error retrieving data for genre [{}]", genre, ex);

@@ -44,7 +44,7 @@ public class LibraryDaoTest {
         sexyBoy = new SongBuilder().setTitle("Sexy Boy").setArtist("Air").setAlbum("Moon Safari").setYear("1998")
                 .setGenre("Electronic").setFilePath(TEST_FOLDER + "02 Sexy Boy.mp3").build();
         newNoise = new SongBuilder().setTitle("New Noise").setArtist("Refused").setAlbum("The Shape of Punk to Come")
-                .setYear("1998").setGenre("Punk").setFilePath(TEST_FOLDER + "06 New Noise.mp3").build();
+                .setYear("1998").setGenre("Punk;Post-Hardcore").setFilePath(TEST_FOLDER + "06 New Noise.mp3").build();
         testSong = new SongBuilder().setTrackNumber(1).setTitle("'Test'").setArtist("Blah's").setAlbum("\"test\"")
                 .setYear("2017").setGenre("").setFilePath("D:\\Music\\test\\\'test\'\\09. test.mp3").build();
 
